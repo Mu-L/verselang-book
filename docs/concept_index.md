@@ -77,6 +77,7 @@ This index provides quick access to key concepts, language features, and importa
 ### Basic Control
 - **if/then/else** - conditional execution: [Overview](00_overview.md), [Expressions](01_expressions.md), [Control Flow](07_control.md), [Failure](08_failure.md)
 - **case** - pattern matching: [Overview](00_overview.md), [Enums - Using Enums](09_structs_enums.md#using-enums), [Control Flow](07_control.md)
+- **first** - first matching iteration: [Control Flow](07_control.md), [Failure](08_failure.md)
 - **for** - iteration: [Overview](00_overview.md), [Control Flow](07_control.md), [Failure](08_failure.md)
 - **loop** - infinite loops: [Control Flow](07_control.md), [Failure](08_failure.md), [Concurrency](14_concurrency.md)
 - **block** - statement sequences: [Control Flow](07_control.md), [Failure](08_failure.md), [Classes - Blocks for Initialization](10_classes_interfaces.md#blocks-for-initialization), [Concurrency](14_concurrency.md)

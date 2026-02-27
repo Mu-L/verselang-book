@@ -103,7 +103,7 @@ if (Player := GetPlayerByName[Name], Score := GetPlayerScore[Player], Score > 10
 
 This `if` condition contains three potentially failable expressions. All must succeed for the body to execute. If any fails, the entire condition fails, and control moves to the `else` branch (if present) or past the `if` entirely. The beauty is that each expression can use the results of previous ones - `Score` is only computed if we successfully found the `Player`.
 
-The `for` expression creates a failure context for each iteration:
+The `for` expression creates a failure context for each iteration of the domain clause:
 
 <!--versetest
 Inventory:[]int= array{1}
@@ -117,6 +117,18 @@ for (Item : Inventory, IsWeapon[Item], Damage := GetDamage[Item], Damage > 50):
 ```
 
 Each iteration attempts the failable expressions. If they all succeed, the body executes for that item. If any fails, that iteration is skipped, and the loop continues with the next item. This creates a natural filtering mechanism without explicit conditional logic.
+
+Similar to `for`, the `first` expression creates a failure context for the domain clause:
+<!--versetest
+Inventory:[]int= array{1}
+IsWeapon:[]int= array{1}
+GetDamage(:int)<computes><decides>:int=1
+-->
+<!-- 100 -->
+```verse
+PowerfulWeapon := option. first(Item : Inventory, IsWeapon[Item], Damage := GetDamage[Item], Damage > 50). Item
+```
+Unlike `for`, if there are no successful iterations, `first` itself will fail, and so must be used in a failure context. In the above example, `option` is used to handle failure of the `first`.
 
 Functions marked with `<decides>` create a failure context for their entire body:
 

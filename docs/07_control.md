@@ -720,9 +720,9 @@ explicit accumulator variables.
 
 **Breaking from For Loops:**
 
-The `break` statement cannot exit `for` loops early.
-
-<!-- TODO EXPLAIN AND GIVE ALTERNATIVES -->
+The `break` statement cannot exit `for` loops early. If you need only the
+first matching result from an iteration, use `first` instead of `for`
+(see [First Expressions](#first-expressions) below).
 
 **Note on Continue:**
 
@@ -814,9 +814,9 @@ resulting array is what gets stored.
 
 The range operator `..` has strict limitations that distinguish it
 from other iterable types. Ranges are *not first-class values*—they
-exist solely as syntactic sugar within for loop iteration clauses.
-Ranges cannot be used in some contexts where you might expect them to
-work:
+are expressions that iteratively yield each integer in the range as a
+separate value. Ranges cannot be used in some contexts where you
+might expect them to work:
 
 <!--NoCompile-->
 <!-- 40 -->
@@ -843,6 +843,100 @@ Length := (1..10).Length
 
 Ranges work exclusively with the `int` type. Other numeric types,
 booleans, types, or objects are not supported.
+
+## First Expressions
+
+The `first` expression is similar to `for`, but instead of evaluating
+the body for every iteration of the domain clause, it evaluates only
+the **first** iteration of the domain clause that succeeds. Instead
+of yielding an array as `for` does, it yields the value of the body
+for that single iteration. If no iteration reaches the body, `first`
+fails — so it requires a `<decides>` context.
+
+<!--verse
+player:=struct{ Name:string }
+GetScore(P:player)<computes><decides>:int=0
+-->
+<!-- 80 -->
+```verse
+# Find the first player with a score above the threshold
+FindTopScorer(Players:[]player, Threshold:int)<decides>:player =
+    first (Player : Players; GetScore[Player] > Threshold):
+        Player
+```
+
+Like `for`, the `first` expression supports three syntax forms.
+The block form uses `do:` to separate the iteration clauses from
+the body:
+
+<!--NoCompile-->
+<!-- 81 -->
+```verse
+# Block form with do:
+first:
+    X : Collection
+    Predicate[X]
+do:
+    Process(X)
+
+# Braces form
+first(X : Collection; Predicate[X]){ Process(X) }
+
+# Dot form for single expressions
+first(X : Collection; Predicate[X]). Process(X)
+```
+
+The `first` expression uses the same binding syntax as `for`. You
+can iterate arrays, maps, strings, and ranges. You can use index-value
+pairs with the `->` syntax, chain multiple filters, and nest multiple
+iteration sources:
+
+<!--versetest-->
+<!-- 82 -->
+```verse
+# Find the index of an element using index -> value binding
+IndexOf(Arr:[]int, Target:int)<decides>:int =
+    first(I -> V : Arr, V = Target). I
+```
+
+Note that `first` yields the value of the **body** expression, not the
+iteration variable. This is what makes it possible to search for one
+thing and yield another — for example, finding an index by matching a
+value.
+
+**First vs For:**
+
+| | `for` | `first` |
+|-|-------|---------|
+| Yields | Array of all results | First result only |
+| On no match | Empty array | **Fails** (requires `<decides>`) |
+| Stops | After all iterations | After the first iteration |
+
+**Common Patterns:**
+
+Since `first` requires `<decides>`, a common way to use it is to wrap
+it in an `if` or an `option` to handle the case where no match is found:
+
+<!--versetest-->
+<!-- 83 -->
+```verse
+# Find with fallback using if
+FindOrDefault(Arr:[]int, Target:int):int =
+    if (Index := first(I -> V : Arr, V = Target). I):
+        Index
+    else:
+        -1
+```
+
+<!--versetest-->
+<!-- 84 -->
+```verse
+# Find with fallback using if
+FindOptional(Arr:[]int, Target:int):?int =
+    optional:
+        Index := first(I -> V : Arr, V = Target). I
+            Index
+```
 
 ## Return Statements
 
