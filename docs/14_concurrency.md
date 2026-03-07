@@ -48,19 +48,30 @@ it waits for the right moment to resume.
 
 ### Simulation Updates
 
-A simulation update represents one tick of the game's simulation,
-typically corresponding to a frame being rendered. Most games target
-30 or 60 updates per second, creating the smooth motion players
-expect. Each update processes input, updates game logic, runs physics
-simulations, and prepares the next frame for rendering.
+A simulation update (or tick) represents one step of the game's
+simulation. Simulation updates and rendering are **independent** —
+modern engines like Unreal Engine completely separate the two. The
+simulation tick rate (TPS) controls how frequently game logic runs,
+while the rendering frame rate (FPS) controls how frequently frames
+are drawn. These can run at different rates: a game might simulate
+at 30 TPS while rendering at 60 or 120 FPS, or vice versa.
 
-In networked games, the relationship between simulation updates and
-rendering becomes more complex. Multiple simulation updates might
-occur before rendering to maintain synchronization with the server, or
-updates might be interpolated to smooth out network latency. Verse's
-concurrency model abstracts these complexities, allowing you to think
-in terms of logical time flow rather than platform-specific timing
-details.
+Each simulation tick processes input, updates game logic, runs
+physics, and advances the game state. The tick rate acts as a clock
+that limits how fast simulation code is allowed to run — if all
+operations finish before the next tick, the engine waits rather than
+immediately starting the next set of operations.
+
+It is important to distinguish between tick rate and performance.
+Poor performance can delay simulation ticks (effectively lowering
+TPS), but this is separate from the configured tick rate itself.
+Increasing the tick rate does not improve performance — slow code
+running at a higher tick rate will still be slow.
+
+Verse's concurrency model abstracts these details, allowing you to
+think in terms of logical time flow rather than platform-specific
+timing. Async expressions suspend at tick boundaries and resume in
+future ticks when their conditions are met.
 
 Async expressions naturally align with this update cycle. When an
 async expression suspends, it yields control back to the game engine,

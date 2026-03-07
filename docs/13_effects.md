@@ -810,10 +810,28 @@ valid_struct := struct<transacts>{}
 # invalid_struct := struct<decides>{}     # ERROR
 ```
 
-This restriction exists because constructors must complete
-synchronously and successfully. An object's construction cannot
-suspend across time boundaries or fail partway through—the object
-either exists fully formed or doesn't exist at all.
+This restriction applies to the class/struct **declaration** itself —
+the archetype constructor `my_class{...}` cannot be failable or
+suspending. However, **constructor functions** can use `<decides>`:
+
+<!--NoCompile-->
+<!-- 29a -->
+```verse
+# The class declaration cannot be <decides>
+my_class := class:
+    Value:int
+
+# But a constructor function CAN be <decides>
+MakeMyClass<constructor>(V:int)<transacts><decides> := my_class:
+    Value := block:
+        V > 0      # Fails if V <= 0
+        V < 100    # Fails if V >= 100
+        V
+```
+
+This provides failable construction when needed — the object either
+exists fully formed or the constructor function fails and no object
+is created.
 
 Field default values and block clauses in classes have strict effect requirements:
 

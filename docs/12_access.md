@@ -833,6 +833,13 @@ Attempting to use an attribute in the wrong location produces a
 compiler error. For example, a function-scoped attribute cannot be
 applied to a class.
 
+**Reading attributes:** Custom attributes are currently metadata for
+external tooling — the compiler, LSP, and the Unreal Editor can read
+and act on them, but there is no Verse API to query attributes at
+runtime. Attributes are used to apply rules, constraints, or extra
+data that tools outside the language consume, such as serialization
+hints, editor annotations, or performance directives.
+
 ### Getter and Setter Accessors
 
 !!! warning "Internal Feature"

@@ -210,6 +210,37 @@ subclass-before-superclass order, while the BP VM uses
 superclass-before-subclass order. For portable code, avoid depending
 on the execution order of blocks across inheritance hierarchies.
 
+**Why blocks instead of constructors?** Block clauses have access to
+`Self` and all fields of the class, while constructor functions do
+not have access to `Self`. This makes blocks the natural place for
+initialization logic that needs to reference the object being
+constructed — such as registering `Self` with a global system or
+computing derived values from multiple fields.
+
+Additionally, field default values cannot use divergent calls — calls
+that might not complete. This means you cannot write:
+
+<!--NoCompile-->
+<!-- 06a-->
+```verse
+# ERROR V3582: Divergent calls cannot be used to define data-members
+bar := class:
+    Foo:foo = MakeFoo()
+```
+
+Instead, you give the field a simple default and move the
+initialization logic into a block:
+
+<!--NoCompile-->
+<!-- 06b-->
+```verse
+bar := class:
+    var Foo:foo = foo{}
+
+    block:
+        set Foo = MakeFoo()  # Block can call divergent functions
+```
+
 **Constraints on block clauses:**
 
 - Blocks cannot contain failure (`<decides>`) operations
@@ -223,7 +254,29 @@ Block clauses are particularly useful for:
 - Logging object creation
 - Computing derived values during initialization
 - Registering objects with global systems
-- Performing validation that goes beyond simple field checks
+- Performing initialization that requires `Self` or divergent calls
+
+### Let Clauses in Archetypes
+
+Archetype expressions (used to construct class and struct instances)
+can include `let` clauses that introduce local variable bindings.
+These are useful for computing intermediate values used by multiple
+field initializers, avoiding repetition:
+
+<!--NoCompile-->
+<!-- 06c-->
+```verse
+MkWord8<constructor>(I:int)<decides><transacts> := Word8:
+    let:
+        MaxU8:int = Int[Pow(2.0, 8.0)] - 1 or Impossible("MkWord8")
+    B := 0 <= I and I <= MaxU8
+```
+
+The `let` clause introduces bindings (`MaxU8` in the example above)
+that are visible to subsequent field initializers in the same
+archetype. Unlike `block` clauses, `let` clauses are restricted to
+variable declarations only — standalone expressions are not permitted
+inside `let`.
 
 ### Self
 
@@ -696,10 +749,27 @@ object-oriented programming.
 ### Constructor Functions
 
 Classes don't have traditional constructor methods like you might find
-in other object-oriented languages. Instead, Verse provides two
-approaches to object construction: direct field initialization through
-archetype expressions, and constructor functions for complex
-initialization scenarios.
+in other object-oriented languages. Instead, Verse provides three
+approaches to object construction, each suited to different needs:
+
+- **Archetype expressions** — direct field initialization for simple
+  cases. Straightforward and requires no extra definitions.
+- **Block clauses** — initialization code in the class body that runs
+  on every construction. Has access to `Self` and all fields,
+  making it ideal for registering the object, computing derived
+  values, or calling divergent functions that can't appear in field
+  defaults.
+- **Constructor functions** — annotated with `<constructor>`, these
+  are first-class functions that can validate inputs, delegate to
+  other constructors (including parent class constructors), be
+  overloaded, and be passed around as values. They are the most
+  powerful option and essential for inheritance hierarchies where
+  subclass constructors need to initialize superclass fields.
+
+These approaches compose: a constructor function returns an archetype
+expression, which can contain `let` and `block` clauses, and the
+class body can also have its own `block` clauses that execute
+regardless of which constructor was used.
 
 For simple cases where you just need to set field values, use
 archetype expressions directly:
@@ -1902,11 +1972,15 @@ observable behavior, the instantiations are interchangeable.
 
 Parametric classes can reference themselves in their field types,
 enabling recursive generic data structures like linked lists, trees,
-and graphs. However, Verse imposes specific restrictions on how
-recursion can occur.
+and graphs. The key requirement is that the self-reference uses
+**the same type parameter** — this is the only form of recursion
+Verse allows. It works because the compiler can resolve the type
+structure in a single pass: `list_node(int)` contains a
+`?list_node(int)`, which contains a `?list_node(int)`, and so on.
+The optional (`?`) provides the base case that terminates the
+recursion at runtime.
 
-The most common form of recursive parametric type is when a class
-references itself with **the same type parameter**:
+Here is a generic linked list built as a recursive parametric class:
 
 <!--versetest
 # Linked list node
@@ -2002,7 +2076,10 @@ structural type containing itself:
 These fail because they create infinite type expansion—the compiler
 cannot determine the actual structure of the type.
 
-**Valid alternative:** Wrap in a class:
+**Valid alternative:** Wrap the recursive reference in a class. For
+example, a tree where each node holds a list of children is a
+recursive parametric type — each `nested_list(t)` contains an array
+of `nested_list(t)`:
 
 <!-- NoCompile-->
 <!-- 72-->
@@ -2012,7 +2089,7 @@ nested_list(t:type) := class:
     Items:[]nested_list(t)  # OK - wrapped in class
 ```
 
-Here's an example of using nested_list:
+Here's an example of constructing a tree with two children:
 
 <!--versetest
 # Valid: Indirect recursion through class
@@ -2381,7 +2458,7 @@ transactional_container(t:type) := class<transacts>:
 
 - `<decides>` - Can fail
 - `<suspends>` - Can suspend execution
-- `<converges>` - Would conflict with parametric instantiation 
+- `<converges>` - The `<converges>` effect guarantees that a function terminates (see the [Effects](13_effects.md) chapter). Parametric classes cannot use it because instantiating a parametric type may involve arbitrary computation — the compiler cannot guarantee that constructing `my_type(t)` for all possible `t` will terminate.
 
 **Effect propagation:**
 
@@ -3239,8 +3316,13 @@ ProcessBase(Instance:base):void =
         Print("It's a grandchild: {AsGrandchild.Extra}")
 ```
 
-**Important constraint:** Parametric types cannot be
-`<castable>`. This prevents type erasure issues at runtime:
+**Important constraint:** Parametric types cannot be `<castable>`.
+The `<castable>` specifier enables runtime type checks (dynamic
+casts), but Verse erases type parameters at runtime — only the
+concrete class exists, not the specific parametric instantiation.
+This means the runtime cannot distinguish between `container(int)`
+and `container(string)`, so allowing dynamic casts on parametric
+types would be unsound:
 
 <!--versetest-->
 <!-- 120-->
@@ -3411,80 +3493,52 @@ field to be customizable during construction, don't mark it as
 `<final>`. Final fields must also provide a default value — you cannot
 declare a final field without initializing it.
 
-The related `<final_super>` specifier marks classes as terminal base
-classes — they can be inherited from but their subclasses cannot be
-further extended.  `<final_super_base>` marks a class as the ultimate
-root of a restricted inheritance tree. Classes with this specifier can
-be inherited from, but their subclasses automatically become final —
-they cannot be further extended. This creates a two-level inheritance
-limit starting from the base:
+The related `<final_super>` specifier does **not** prevent further
+subclassing. Instead, it guarantees that all subclasses of this class
+will always directly inherit from it — there will be no intermediate
+classes inserted between the `<final_super>` class and its
+descendants in the inheritance chain. Subclasses can themselves be
+further subclassed:
 
-
-<!-- versetest
-entity:=class{}
-component := class<abstract><unique><castable><final_super_base>:
-      Parent: entity
-	  
-physics_component := class<final_super>(component): 
-      Mass:float = 1.0
-<# 
--->
+<!-- NoCompile-->
 <!-- 125-->
 ```verse
 component := class<abstract><unique><castable><final_super_base>:
       Parent:entity
 
-  # Can inherit from component (first level)
-
 physics_component := class<final_super>(component):
       Mass:float = 1.0
 
- # Cannot inherit from physics_component - it's implicitly final
-
- gravity_component := class(physics_component): # COMPILE ERROR
+# Valid: further subclassing is allowed
+gravity_component := class(physics_component):
+      GravityScale:float = 1.0
 ```
-<!-- #>-->
 
-So, `<final_super>` marks a class that inherits from a
-`<final_super_base>` class, explicitly declaring it as the final
-inheritance point. While classes inheriting from `<final_super_base>`
-are implicitly final, using `<final_super>` makes this finality
-explicit and self-documenting.
+`<final_super_base>` marks the root of a restricted inheritance tree.
+Its purpose is to work with `GetCastableFinalSuperClass`, which
+finds the `<final_super>` class in the hierarchy for a given
+instance. This enables component architectures where you need to
+identify the "category" of a component at runtime:
 
-<!--versetest
-copter_camera_component_director_version := class{}
-component:=class<final_super_base>{}
-# Explicitly marking as final_super (though implicitly final anyway)
-name_component := class<final_super>(component):
-      Name:string = ""
-
-copter_camera_component := class<final_super>(copter_camera_component_director_version):
-      # Terminal implementation
-<#
--->
+<!-- NoCompile-->
 <!-- 126-->
 ```verse
-# Explicitly marking as final_super (though implicitly final anyway)
-name_component := class<final_super>(component):
-      Name:string = ""
+#            base_type<castable>
+#               /         \
+#  a_class<final_super>   w_class
+#         |                  |
+#      b_class            x_class<final_super>
+#         |                  |
+#      c_class            y_class
 
-copter_camera_component := class<final_super>(copter_camera_component_director_version):
-      # Terminal implementation
+# GetCastableFinalSuperClass[base_type, c_class{}]
+# returns a_class — the <final_super> ancestor under base_type
 ```
-<!-- #>-->
 
-This pattern is particularly valuable in component architectures where
-you want a base component interface that various concrete components
-implement, but don't want those implementations to spawn their own
-inheritance subtrees. The base class defines the contract, immediate
-subclasses provide implementations, and inheritance stops there —
-clean, controlled, and predictable.
-
-This design enforces architectural discipline, preventing the
-"inheritance explosion" that can occur when every class becomes a
-potential base for further specialization. By limiting inheritance
-depth, these specifiers promote composition over deep inheritance,
-leading to more maintainable and understandable code structures.
+This design is particularly valuable in component architectures
+where you need a stable "category" class in the hierarchy that
+runtime systems can rely on, while still allowing further
+specialization below it.
 
 ### Persistable
 
@@ -3702,8 +3756,19 @@ exactly.
 
 ### Multiple Interfaces with Sharing
 
+Verse interfaces are more permissive than in many other languages —
+they can declare data fields, provide concrete method implementations,
+and a class can implement multiple interfaces even when they share
+member names. This design avoids the friction of requiring globally
+unique names across all interfaces. In practice, independent interface
+authors may naturally use the same names (`Enable`, `Disable`,
+`Power`, `Update`), and requiring every interface to use distinct
+names would create artificial naming conflicts that scale poorly —
+especially when interfaces form deep hierarchies with subinterfaces
+for specialized variants.
+
 When a class implements multiple interfaces that declare fields or
-methods with the same name, you must use qualified names to
+methods with the same name, you use qualified names to
 disambiguate:
 
 <!--versetest-->

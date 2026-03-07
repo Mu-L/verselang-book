@@ -635,6 +635,21 @@ hold. This creates subtypes that only accept values satisfying
 specific conditions, enabling domain-specific constraints enforced by
 the type system.
 
+A natural question is: why fail on out-of-range values when you could
+just clamp? The answer is that clamping silently propagates wrong
+values, which is acceptable for some domains (UI opacity) but
+dangerous in others. In algorithms where exact values matter — bit
+manipulation, hashing, Unicode code point operations, coordinate
+system math — silently clamping an out-of-range value produces
+incorrect results that are extremely hard to track down. Refinement
+types make the constraint explicit and force the caller to handle
+violations, catching bugs at their source rather than letting them
+propagate.
+
+In practice, type aliases like `positive_int` or `zero_to_one_float`
+make refinement types convenient to reuse across a codebase without
+repeating the constraint expression each time.
+
 A refinement type defines a constrained subtype using value predicates:
 
 <!--versetest
