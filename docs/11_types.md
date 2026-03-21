@@ -100,7 +100,7 @@ MyF:float = MyI * 1.0  # Explicit conversion to float
 ```
 
 !!! note 
-    The strongest reason for dissallowing implicit conversions is that
+    The strongest reason for disallowing implicit conversions is that
 	they can cause code to break when new overloadings to a function
 	are added. Imagine a call to function `f` that takes a float such
 	as `f(1)`, if the integer argument was implicitly converted to a 
@@ -458,7 +458,7 @@ void("result")     # Discard a string
 void(component{})  # Discard an object
 ```
 
-This implictly happens when you call a function for its side effects
+This implicitly happens when you call a function for its side effects
 and want to ignore its return value.
 
 ### Dynamic Type-Based Casting
@@ -1062,7 +1062,7 @@ operator'='(X:t, Y:t where t:subtype(comparable))<decides>:t
 operator'<>'(X:t, Y:t where t:subtype(comparable))<decides>:t
 ```
 
-The signatures requires that both operands be subtypes of comparable
+The signatures require that both operands be subtypes of comparable
 and the return type is the least upper bound of their types.
 
 <!--versetest
