@@ -200,7 +200,7 @@ This index provides quick access to key concepts, language features, and importa
 - **return values** - function outputs: [Functions](06_functions.md)
 - **function types** - function signatures: [Functions](06_functions.md), [Type System](11_types.md)
 - **overloading** - multiple definitions: [Functions](06_functions.md), [Operators](04_operators.md)
-- **lambdas** - anonymous functions (not yet supported, use nested functions): [Functions](06_functions.md), [Expressions](01_expressions.md)
+- **lambdas** - anonymous functions: [Functions](06_functions.md), [Expressions](01_expressions.md)
 - **nested functions** - local function definitions: [Functions](06_functions.md)
 - **higher-order functions** - functions as values: [Overview](00_overview.md), [Functions](06_functions.md)
 
