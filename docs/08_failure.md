@@ -21,8 +21,8 @@ Consider the simple act of accessing an array element. In traditional languages,
 <!--NoCompile-->
 <!-- 01 -->
 ```verse
-if (Index < Array.length) {  # Traditional, non-Verse
-    Value = Array[index]
+if (Index < Array.Length) {  # Traditional, non-Verse
+    Value = Array[Index]
     Process(Value)
 }
 ```
@@ -117,6 +117,10 @@ for (Item : Inventory, IsWeapon[Item], Damage := GetDamage[Item], Damage > 50):
 ```
 
 Each iteration attempts the failable expressions. If they all succeed, the body executes for that item. If any fails, that iteration is skipped, and the loop continues with the next item. This creates a natural filtering mechanism without explicit conditional logic.
+
+
+!!! note "Unreleased Feature"
+    `first` has not yet been released. The following documents planned functionality that is not currently available.
 
 Similar to `for`, the `first` expression creates a failure context for the domain clause:
 <!--versetest
