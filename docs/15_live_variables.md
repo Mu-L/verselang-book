@@ -648,7 +648,7 @@ var AlternateValue:int = 20
 var CurrentValue:int = 0
 
 set live CurrentValue =
-    if (UseAlternate) then AlternateValue else PrimaryValue
+    if (UseAlternate?) then AlternateValue else PrimaryValue
 
 # CurrentValue = 10
 set UseAlternate = true
@@ -684,7 +684,7 @@ resource_manager := class:
     var ModelLoaded:logic = false
 
     Initialize()<suspends>:void =
-        upon(TextureLoaded and ModelLoaded):
+        upon(TextureLoaded? and ModelLoaded?):
             Print("All resources loaded, starting game")
             StartGame()
 ```
