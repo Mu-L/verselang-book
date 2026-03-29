@@ -937,130 +937,39 @@ tasks those losers might have created.
 
 ### The defer: Block
 
-The `defer:` block provides guaranteed cleanup code execution when a
-function scope exits, whether through normal completion, failure, or
-cancellation. Deferred blocks always execute during stack unwinding,
-making them the perfect tool for resource cleanup, logging, and
-finalization.
+The `defer:` block provides guaranteed cleanup code that executes when
+its enclosing scope exits — whether through normal completion, failure,
+or cancellation. For the full description of `defer` semantics,
+including execution order, scope rules, and restrictions, see
+[Defer Statements](07_control.md#defer-statements).
+
+This section focuses on how `defer` interacts with concurrency.
+
+**defer: with cancellation:**
+
+When a concurrent task is canceled (e.g., a losing `race` arm or a
+cancelled `spawn`), defer blocks execute as the stack unwinds from the
+cancellation point. This makes `defer` essential for resource cleanup
+in concurrent code:
 
 <!--versetest
 AcquireResource():int=42
 ReleaseResource(:int):void={}
-ProcessWithResource(:int)<suspends>:void={Sleep(1.0)}
+LongRunningTask(:int)<suspends>:void={loop{NextTick()}}
 -->
 <!-- 36 -->
 ```verse
-UseResourceSafely()<suspends>:void =
-    Resource := AcquireResource()
-
-    defer:
-        # This ALWAYS runs when function exits
-        ReleaseResource(Resource)
-        Print("Resource released")
-
-    ProcessWithResource(Resource)
-    # defer block executes here on normal completion
+ProcessWithTimeout()<suspends>:void =
+    race:
+        block:
+            Resource := AcquireResource()
+            defer:
+                ReleaseResource(Resource)  # Runs when this arm is cancelled
+            LongRunningTask(Resource)
+        block:
+            Sleep(10.0)  # Timeout
+    # If timeout wins, first block is cancelled and defer runs
 ```
-
-**Key defer: behaviors:**
-
-1. **Always executes on scope exit**: Whether the function returns normally, fails, or is canceled, the defer block runs
-2. **Runs in reverse order**: Multiple defer blocks execute in LIFO
-   order (last-in-first-out - most recent defer runs first)
-3. **Captures current scope**: defer blocks close over variables from
-   the enclosing scope
-4. **Cannot be suspended**: defer blocks must execute immediately and
-   cannot contain suspending operations
-
-**Multiple defer blocks execute in reverse order:**
-
-<!--versetest-->
-<!-- 37 -->
-```verse
-Print("Start")
-
-defer:
-    Print("First defer (runs last)")
-
-defer:
-    Print("Second defer (runs second)")
-
-defer:
-    Print("Third defer (runs first)")
-
-Print("End")
-
-# Output:
-# Start
-# End
-# Third defer (runs first)
-# Second defer (runs second)
-# First defer (runs last)
-```
-
-This reverse ordering mirrors the natural stacking of resource
-acquisition—resources are released in the opposite order they were
-acquired, preventing dependency issues.
-
-**Common defer: patterns:**
-
-**Resource cleanup:**
-
-<!--versetest
-OpenFile(:string):int=0
-CloseFile(:int):void={}
-ProcessFile(:int)<suspends>:void={}
--->
-<!-- 38 -->
-```verse
-ProcessFileWithCleanup(Path:string)<suspends>:void =
-    FileHandle := OpenFile(Path)
-
-    defer:
-        CloseFile(FileHandle)
-
-    ProcessFile(FileHandle)
-    # File always closed, even on cancellation
-```
-
-**State restoration:**
-
-<!--versetest
-SaveState():int=0
-RestoreState(:int):void={}
-ModifyState()<suspends>:void={}
--->
-<!-- 39 -->
-```verse
-TemporarilyModifyState()<suspends>:void =
-    OriginalState := SaveState()
-
-    defer:
-        RestoreState(OriginalState)
-
-    ModifyState()
-    # State restored to original value
-```
-
-**Logging and debugging:**
-
-<!--versetest
-Operation()<suspends>:void={}
--->
-<!-- 40 -->
-```verse
-TrackedOperation()<suspends>:void =
-    Print("Operation starting")
-
-    defer:
-        Print("Operation finished (or canceled)")
-
-    Operation()
-```
-
-**defer: with cancellation:**
-
-When a task is canceled, defer blocks execute as the stack unwinds from the cancellation point:
 
 <!--versetest
 Setup():void={}
@@ -1079,6 +988,8 @@ CancellableWork()<suspends>:void =
     # If this task is canceled, defer runs during unwinding
     LongOperation()
 ```
+
+**No suspending in defer:**
 
 defer blocks **cannot** contain suspending operations. This ensures
 cleanup happens immediately without delay:
@@ -1100,37 +1011,10 @@ BadDefer()<suspends>:void =
 ```
 <!-- #> -->
 
-This restriction is essential—if defer blocks could suspend, cleanup
+This restriction is essential — if defer blocks could suspend, cleanup
 could be delayed indefinitely, defeating their purpose as guaranteed
-finalization.
-
-**defer: scope:**
-
-defer blocks belong to their enclosing function scope and execute when that function exits:
-
-<!--verse -->
-<!-- 45 -->
-```verse
-HelperFunction():void =
-    defer:
-        Print("Helper defer")
-    Print("In helper")
-
-OuterFunction()<suspends>:void =
-    defer:
-        Print("Outer defer")
-
-    HelperFunction()  # Helper's defer runs immediately after HelperFunction returns
-    Print("After helper")
-
-    # Output:
-    # Helper defer
-    # After helper
-    # Outer defer
-```
-
-Each function has its own defer stack. When a function returns, only
-its defer blocks execute, not those of calling functions.
+finalization. However, defer blocks *can* use `branch` or `spawn` for
+fire-and-forget async operations.
 
 ## Timing Functions
 

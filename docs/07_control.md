@@ -987,9 +987,22 @@ immediately upon finding a match, but fail if no match is found.
 
 ## Defer Statements
 
-The `defer` statement schedules code to run just before successfully
-exiting the current scope. This makes it invaluable for cleanup
-operations like closing files, releasing resources, or logging:
+The `defer` statement schedules code to run when the enclosing scope
+exits. This makes it invaluable for cleanup operations like closing
+files, releasing resources, or logging.
+
+Defer is **scope-based**, not function-based. A `defer` block executes
+when leaving the scope that directly contains it, including:
+
+- **Function bodies** — runs when the function returns
+- **Each iteration of `for` loops** — runs at the end of each iteration
+- **Each iteration of `loop` blocks** — runs at the end of each iteration (including on `break`)
+- **`if`/`then`/`else` clauses** — runs when leaving the chosen branch
+- **`block` scopes** — runs when leaving the block
+- **`defer` blocks themselves** — nested defers run when the outer defer completes
+- **Cancelled concurrent scopes** (`race`, `branch`, `spawn`) — runs during cancellation unwinding (see [Concurrency](14_concurrency.md#cleanup-and-resource-management))
+
+Here is a basic example:
 
 <!--versetest
 OpenFile(P:string)<computes>:?int=false
@@ -1226,6 +1239,10 @@ to ensure predictable behavior:
 5. **Cannot suspend directly:** Defer blocks cannot contain suspend
    expressions, but they can use `branch` or `spawn` for
    fire-and-forget async operations.
+
+For how `defer` interacts with async cancellation and concurrency
+constructs like `race` and `spawn`, see
+[Cleanup and Resource Management](14_concurrency.md#cleanup-and-resource-management).
 
 ## Profiling
 
