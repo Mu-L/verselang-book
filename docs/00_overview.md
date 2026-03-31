@@ -468,16 +468,16 @@ Transform(Input:in_t, Processor:type{_(:in_t):out_t} where in_t:type, out_t:type
 ```
 
 
-Module names follow the snake_case pattern, while paths use a hierarchical structure with forward slashes and PascalCase for path segments:
+Module names always use PascalCase, including path segments:
 
 <!--NoCompile-->
 <!-- 11 -->
 ```verse
 # Module definition
-inventory_system := module:
+InventorySystem := module:
     # Module contents
 
-# Path structure uses PascalCase for segments
+# Path segments also use PascalCase
 using { /Fortnite.com/Characters/PlayerController }
 using { /MyGame.com/Systems/CombatSystem }
 using { /Verse.org/Random }

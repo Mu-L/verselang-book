@@ -785,19 +785,19 @@ This prevents ambiguity and ensures that class methods always take precedence.
 functions. They're only visible where they're defined or imported:
 
 <!--versetest
-utils := module:
+Utils := module:
     (S:string).Reverse<public>():string = S
 <#
 -->
 <!-- 52-->
 ```verse
 # In module A
-utils := module:
+Utils := module:
     (S:string).Reverse<public>():string =
         # Implementation
 
 # In module B
-using { utils }
+using { Utils }
 
 "Hello".Reverse()  # Available after importing
 ```

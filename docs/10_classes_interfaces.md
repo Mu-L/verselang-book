@@ -33,7 +33,7 @@ top-level type definitions that establish the type system's structure:
 <!-- 01-->
 ```verse
 # Valid: class at module scope
-my_module := module:
+MyModule := module:
     entity := class:
         ID:int
 
@@ -1162,13 +1162,13 @@ This prohibition extends across various contexts:
 # ERROR: Cannot shadow classes
 something := class {}
 
-m := module:
+M := module:
     something := class {}  # ERROR
 
 # ERROR: Cannot shadow variables
 Value:int = 1
 
-m := module:
+M := module:
      Value:int = 2        # ERROR
 
 # ERROR: Cannot shadow data members
@@ -1178,8 +1178,8 @@ A():void = {}             # ERROR - order doesn't matter
 
 # ERROR: Module and function cannot share name
 
-id():void = {}
-id := module {}           # ERROR
+Id():void = {}
+Id := module {}           # ERROR
 ```
 
 The shadowing prohibition exists **regardless of definition order** -
@@ -1411,47 +1411,47 @@ through the entire hierarchy:
 <!--versetest-->
 <!-- 39-->
 ```verse
-top := module:
-    (top:)m<public> := module:
-        (top.m:)Value<public>:int = 1
-        (top.m:)F<public>(X:int):int = X + 10
+Top := module:
+    (Top:)M<public> := module:
+        (Top.M:)Value<public>:int = 1
+        (Top.M:)F<public>(X:int):int = X + 10
 
-        (top.m:)m<public> := module:
-            (top.m.m:)Value<public>:int = 3
-            (top.m.m:)F<public>(X:int):int = X + 100
+        (Top.M:)M<public> := module:
+            (Top.M.M:)Value<public>:int = 3
+            (Top.M.M:)F<public>(X:int):int = X + 100
 ```
 
 And a use case:
 
 <!--versetest
-top := module:
-    (top:)m<public> := module:
-        (top.m:)Value<public>:int = 1
-        (top.m:)F<public>(X:int):int = X + 10
+Top := module:
+    (Top:)M<public> := module:
+        (Top.M:)Value<public>:int = 1
+        (Top.M:)F<public>(X:int):int = X + 10
 
-        (top.m:)m<public> := module:
-            (top.m.m:)Value<public>:int = 3
-            (top.m.m:)F<public>(X:int):int = X + 100
+        (Top.M:)M<public> := module:
+            (Top.M.M:)Value<public>:int = 3
+            (Top.M.M:)F<public>(X:int):int = X + 100
 
-using { top.m }
-using { top.m.m }
+using { Top.M }
+using { Top.M.M }
 
 -->
 <!-- 391-->
 ```verse
-# using { top.m }
-# using { top.m.m }
+# using { Top.M }
+# using { Top.M.M }
 
 # Access with full qualification
-(top.m:)F(0)          # Returns 10
-(top.m.m:)F(0)        # Returns 100
+(Top.M:)F(0)          # Returns 10
+(Top.M.M:)F(0)        # Returns 100
 
 # Access via path
-top.m.F(1)            # Returns 11
-top.m.m.F(1)          # Returns 101
+Top.M.F(1)            # Returns 11
+Top.M.M.F(1)          # Returns 101
 ```
 
-Nested modules can have the same simple name (e.g., both `m`)
+Nested modules can have the same simple name (e.g., both `M`)
 when qualified with their full path, allowing hierarchical
 organization without naming conflicts.
 

@@ -30,8 +30,8 @@ and your code organization completely transparent.
 All `.verse` files within the same folder are considered part of that
 module and share the same namespace. This means that if you have three
 files - `player.verse`, `inventory.verse`, and `equipment.verse` - all
-in a folder called `player_systems`, they all contribute to the
-`player_systems` module and can reference each other's definitions
+in a folder called `PlayerSystems`, they all contribute to the
+`PlayerSystems` module and can reference each other's definitions
 without any import statements. This automatic grouping makes it easy
 to split large modules across multiple files for better organization
 while maintaining the logical unity of the module.
@@ -155,7 +155,7 @@ Modules can contain other modules, creating a hierarchy:
 
 <!--versetest
 m := module{
-base_module<public> := module:
+BaseModule<public> := module:
     submodule<public> := module:
         submodule_class<public> := class:
             Value:int = 100
@@ -167,7 +167,7 @@ base_module<public> := module:
 -->
 <!-- 02 -->
 ```verse
-base_module<public> := module:
+BaseModule<public> := module:
     submodule<public> := module:
         submodule_class<public> := class:
             Value:int = 100
@@ -177,13 +177,13 @@ base_module<public> := module:
 ```
 <!-- #> -->
 
-The file structure `module_folder/base_module` is equivalent to:
+The file structure `ModuleFolder/BaseModule` is equivalent to:
 
 <!--versetest
 m := module{
-module_folder := module:
-    base_module := module:
-        submodule := module:
+ModuleFolder := module:
+    BaseModule := module:
+        Submodule := module:
             submodule_class := class:
                 Value:int = 0
 }
@@ -191,9 +191,9 @@ module_folder := module:
 -->
 <!-- 03 -->
 ```verse
-module_folder := module:
-    base_module := module:
-        submodule := module:
+ModuleFolder := module:
+    BaseModule := module:
+        Submodule := module:
             submodule_class := class:
                 # Class definition
 ```
@@ -215,7 +215,7 @@ executable statements:
 <!-- 04 -->
 ```verse
 # Valid: All definitions
-config := module:
+Config := module:
     MaxValue:int = 100
     DefaultName:string = "Player"
 
@@ -225,12 +225,12 @@ config := module:
         Name:string
 
 # Invalid: Contains non-definition expressions
-bad_module := module:
+BadModule := module:
     MaxValue:int = 100
     1 + 2  # ERROR 3560: Not a definition
 
 # Invalid: Contains function call
-bad_module2 := module:
+BadModule2 := module:
     InitFunction():void = {}
     InitFunction()  # ERROR 3585: Cannot call function in module body
 ```
@@ -245,11 +245,11 @@ All data definitions at module scope must explicitly specify their type. Type in
 <!-- 05 -->
 ```verse
 # Invalid: Missing type annotation
-bad_module := module:
+BadModule := module:
     Value := 42  # ERROR 3547: Must specify type domain
 
 # Valid: Explicit type annotation
-good_module := module:
+GoodModule := module:
     Value:int = 42  # OK: Type explicitly specified
 ```
 
@@ -261,7 +261,7 @@ Modules can contain these categories of definitions:
 
 <!--versetest
 m := module{
-utilities := module:
+Utilities := module:
     Version:int = 1
     AppName:string = "MyApp"
 
@@ -281,7 +281,7 @@ utilities := module:
         Active
         Inactive
 
-    nested := module:
+    Nested := module:
         NestedFunction():void = {}
 
     coordinate := tuple(float, float)
@@ -292,7 +292,7 @@ utilities := module:
 -->
 <!-- 06 -->
 ```verse
-utilities := module:
+Utilities := module:
     # Constants with explicit types
     Version:int = 1
     AppName:string = "MyApp"
@@ -317,7 +317,7 @@ utilities := module:
         Inactive
 
     # Nested modules
-    nested := module:
+    Nested := module:
         NestedFunction():void = {}
 
     # Type aliases
@@ -337,15 +337,15 @@ stored, passed, or manipulated at runtime.
 <!--NoCompile-->
 <!-- 07 -->
 ```verse
-my_module := module:
+MyModule := module:
     Value<public>:int = 42
 
 # Invalid: Cannot treat module as value
-M:my_module = my_module  # ERROR 
+M:MyModule = MyModule  # ERROR 
 ```
 
 Modules exist purely as namespaces and organizational constructs at
-compile time. The module identifier `my_module` can only be used in
+compile time. The module identifier `MyModule` can only be used in
 specific contexts.
 
 **Cannot Pass Modules as Arguments:**
@@ -353,12 +353,12 @@ specific contexts.
 <!--NoCompile-->
 <!-- 08 -->
 ```verse
-my_module := module:
+MyModule := module:
     X<public>:int = 1
 
 # Invalid: Cannot pass module as parameter
 ProcessModule(M:module):void = {}  # ERROR
-ProcessModule(my_module)  # ERROR
+ProcessModule(MyModule)  # ERROR
 ```
 
 There is no `module` type that can be used in function signatures.
@@ -368,14 +368,14 @@ There is no `module` type that can be used in function signatures.
 <!--NoCompile-->
 <!-- 09 -->
 ```verse
-module_a := module:
+ModuleA := module:
     Value:int = 1
 
-module_b := module:
+ModuleB := module:
     Value:int = 2
 
 # Invalid: Cannot create tuple or array of modules
-Modules := (module_a, module_b)  # ERROR
+Modules := (ModuleA, ModuleB)  # ERROR
 ```
 
 ## Importing Modules
@@ -459,7 +459,7 @@ ProcessData():void =
     Value := GetRandomFloat(0.0, 1.0)
 
 # Within module definition
-utilities := module:
+Utilities := module:
     using { /Verse.org/Random }
 
     GenerateId<public>():int =
@@ -492,7 +492,7 @@ using { /MyGameProject/Systems/Combat }
 using { ../UI/MainMenu }
 
 # Import from the same directory
-using { player_controller }
+using { PlayerController }
 
 # Import from a subdirectory
 using { Subsystems/WeaponSystem }
@@ -510,34 +510,34 @@ in which you import modules matters, and there are multiple valid
 approaches:
 
 <!--versetest
-game_systems := module:
-    inventory<public> := module{}
+GameSystems := module:
+    Inventory<public> := module{}
 m:=module{
-using { game_systems }
-using { inventory }
+using { GameSystems }
+using { Inventory }
 
-using { game_systems.inventory }
+using { GameSystems.Inventory }
 
-using { game_systems }
+using { GameSystems }
 }
 <#
 -->
 <!-- 14 -->
 ```verse
 # Method 1: Import parent first, then child
-using { game_systems }
-using { inventory }  # Assumes inventory is nested in game_systems
+using { GameSystems }
+using { Inventory }  # Assumes Inventory is nested in GameSystems
 
 # Method 2: Direct path to nested module
-using { game_systems.inventory }
+using { GameSystems.Inventory }
 
 # Method 3: Import parent and access child through qualification
-using { game_systems }
-# Later in code: game_systems.inventory.Item
+using { GameSystems }
+# Later in code: GameSystems.Inventory.Item
 
 # IMPORTANT: This order causes an error
-# using { inventory }      # Error: inventory not found
-# using { game_systems }   # Too late, inventory import already failed
+# using { Inventory }      # Error: Inventory not found
+# using { GameSystems }   # Too late, Inventory import already failed
 ```
 <!-- #> -->
 
@@ -620,10 +620,10 @@ F():void =
 
 
 LogVerseBuild: Error: C:/VerseBook/Book/verse/16_modules/17.versetest(8,10, 8,22): Script Error 3506: Unknown identifier `item`. Did you mean any of:
-inventory_module.item
+InventoryModule.item
 item
 LogVerseBuild: Error: C:/VerseBook/Book/verse/16_modules/17.versetest(9,10, 9,33): Script Error 3506: Unknown identifier `item`. Did you mean any of:
-inventory_module.item
+InventoryModule.item
 
 -->
 
@@ -632,17 +632,17 @@ inventory_module.item
 ```verse
 # Qualified access syntax: (qualifier:)identifier
 
-using { combat_module }
-using { magic_module }
+using { CombatModule }
+using { MagicModule }
 
 ProcessDamage():void =
     # Both modules define CalculateDamage
-    PhysicalDamage := (combat_module:)CalculateDamage(100.0)
-    MagicalDamage := (magic_module:)CalculateDamage(100.0)
+    PhysicalDamage := (CombatModule:)CalculateDamage(100.0)
+    MagicalDamage := (MagicModule:)CalculateDamage(100.0)
 
     # Explicitly qualify local vs module identifiers
     LocalItem := item{Name := "Sword"}  # Local definition
-    ModuleItem := (inventory_module:)item{Name := "Shield"}  # From module
+    ModuleItem := (InventoryModule:)item{Name := "Shield"}  # From module
 ```
 
 The qualified access expression `(module:)identifier` is particularly useful in several scenarios:
@@ -980,13 +980,13 @@ Notice how `Health` and `TakeDamage` are qualified with `/YourPackage/player_cla
 <!--MoCompile-->
 ```verse
 # What you write:
-config := module:
+Config := module:
     MaxPlayers<public>:int = 100
 
     GetPlayerLimit<public>():int = MaxPlayers
 
 # How the compiler sees it:
-(/YourPackage:)config := module:
+(/YourPackage:)Config := module:
     (/YourPackage/config:)MaxPlayers<public>:(/Verse.org/Verse:)int = 100
 
     (/YourPackage/config:)GetPlayerLimit<public>():(/Verse.org/Verse:)int =
@@ -1016,24 +1016,24 @@ Here's a more realistic example showing how qualification works across multiple 
 <!--NoCompile-->
 ```verse
 # What you write:
-game_system := module:
+GameSystem := module:
     BaseValue:int = 42
 
-    calculator := module:
+    Calculator := module:
         Multiplier:int = 2
 
         Calculate(Input:int):int =
             Input * Multiplier + BaseValue
 
 # How the compiler sees it:
-(/YourGame:)game_system := module:
-    (/YourGame/game_system:)BaseValue:(/Verse.org/Verse:)int = 42
+(/YourGame:)GameSystem := module:
+    (/YourGame/GameSystem:)BaseValue:(/Verse.org/Verse:)int = 42
 
-    (/YourGame/game_system:)calculator := module:
-        (/YourGame/game_system/calculator:)Multiplier:(/Verse.org/Verse:)int = 2
+    (/YourGame/GameSystem:)Calculator := module:
+        (/YourGame/GameSystem/Calculator:)Multiplier:(/Verse.org/Verse:)int = 2
 
-        (/YourGame/game_system/calculator:)Calculate((local:)Input:(/Verse.org/Verse:)int):(/Verse.org/Verse:)int =
-            (local:)Input * (/YourGame/game_system/calculator:)Multiplier + (/YourGame/game_system:)BaseValue
+        (/YourGame/GameSystem/Calculator:)Calculate((local:)Input:(/Verse.org/Verse:)int):(/Verse.org/Verse:)int =
+            (local:)Input * (/YourGame/GameSystem/Calculator:)Multiplier + (/YourGame/GameSystem:)BaseValue
 ```
 
 Notice how:
@@ -1125,15 +1125,15 @@ automatic resolution or make your intent explicit:
   Line 11: Verse compiler error V3509: The assignment's left hand expression type `int` cannot be assigned to
 -->
 ```verse
-game_system := module:
+GameSystem := module:
     Value:int = 100
 
     # Explicitly qualify to avoid any ambiguity
-    GetValue():int = (game_system:)Value
+    GetValue():int = (GameSystem:)Value
 
     # Use local qualifier for parameters
     SetValue((local:)Value:int):void =
-        set (game_system:)Value = (local:)Value
+        set (GameSystem:)Value = (local:)Value
 ```
 
 Explicit qualification is particularly valuable when:
@@ -1430,14 +1430,14 @@ using { /Verse.org/Random }  # Works
 <!-- 55 -->
 ```verse
 # Wrong: child before parent
-using { inventory }  # Error if inventory is nested
+using { Inventory }  # Error if Inventory is nested
 
 # Correct: parent first
-using { game_systems }
-using { inventory }
+using { GameSystems }
+using { Inventory }
 ```
 
-3. **File location mismatch**: Ensure your file structure matches your module structure. If you have a folder named `player_systems`, all files in that folder are part of the `player_systems` module.
+3. **File location mismatch**: Ensure your file structure matches your module structure. If you have a folder named `PlayerSystems`, all files in that folder are part of the `PlayerSystems` module.
 
 ### Access Denied Errors
 
@@ -1450,14 +1450,14 @@ using { inventory }
 <!--NoCompile-->
 <!-- 56 -->
 ```verse
-# In module_a
+# In ModuleA
 SecretValue:int = 42  # Internal by default
 PublicValue<public>:int = 100  # Explicitly public
 
 # In another module
-using { module_a }
-X := module_a.SecretValue  # Error: not accessible
-Y := module_a.PublicValue  # Works
+using { ModuleA }
+X := ModuleA.SecretValue  # Error: not accessible
+Y := ModuleA.PublicValue  # Works
 ```
 
 2. **Protected or private members**: These are not accessible outside their defining scope.
@@ -1524,20 +1524,20 @@ DamageB := /GameB/Combat.CalculateDamage(10.0)  # Clear
 
 <!--versetest
 m := module{
-module_x := module:
+ModuleX := module:
     Value:int = 10
 
     ProcessValue((local:)Value:int):int =
-        (module_x:)Value + (local:)Value
+        (ModuleX:)Value + (local:)Value
 }
 <#
 -->
 <!-- 59 -->
 ```verse
-module_x := module:
+ModuleX := module:
     Value:int = 10
 
     ProcessValue((local:)Value:int):int =
-        (module_x:)Value + (local:)Value  # Clear distinction
+        (ModuleX:)Value + (local:)Value  # Clear distinction
 ```
 <!-- #> -->

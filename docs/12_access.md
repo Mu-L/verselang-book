@@ -29,8 +29,8 @@ public, you're making a strong commitment about its availability and
 stability:
 
 <!--versetest
-test_01 := module:
-    player_manager<public> := module:
+Test01 := module:
+    PlayerManager<public> := module:
         MaxPlayers<public>:int = 100
 
         player<public> := class:
@@ -40,7 +40,7 @@ test_01 := module:
 -->
 <!-- 01 -->
 ```verse
-player_manager<public> := module:
+PlayerManager<public> := module:
     MaxPlayers<public>:int = 100
 
     player<public> := class:
@@ -162,7 +162,7 @@ collision_info:=class{}
 ApplyGravity(:game_entity,:float):void={}
 CheckCollisions(:game_entity):void={}
 
-physics := module:
+Physics := module:
     gravity_constant:float = 9.81
 
     collision_detector := class<abstract>:
@@ -179,7 +179,7 @@ physics := module:
 -->
 <!-- 04 -->
 ```verse
-physics := module:
+Physics := module:
     # Internal types and constants
     gravity_constant:float = 9.81
 
@@ -218,7 +218,7 @@ which takes one or more module references:
 
 <!-- NoCompile -->
 ```verse
-collaboration := module:
+Collaboration := module:
     # Create a scope that includes both ModuleA and ModuleB
     Shared<public> := scoped{ModuleA, ModuleB}
 
@@ -242,12 +242,12 @@ while keeping it hidden elsewhere:
 
 <!--versetest
 bounding_box:=class{}
-graphics := module:
-    CollidableShape<scoped{physics}> := interface:
+Graphics := module:
+    CollidableShape<scoped{Physics}> := interface:
         GetBounds():bounding_box
 
-physics := module:
-    using{graphics}
+Physics := module:
+    using{Graphics}
 
     sphere_collider := class<abstract>(CollidableShape):
         GetBounds<override>():bounding_box
@@ -255,13 +255,13 @@ physics := module:
 -->
 <!-- 06 -->
 ```verse
-graphics := module:
+Graphics := module:
     # Define an interface scoped to the physics module
-    CollidableShape<scoped{physics}> := interface:
+    CollidableShape<scoped{Physics}> := interface:
         GetBounds():bounding_box
 
-physics := module:
-    using{graphics}
+Physics := module:
+    using{Graphics}
 
     # Physics can implement the interface even though it's defined in graphics
     sphere_collider := class<abstract>(CollidableShape):
@@ -278,8 +278,8 @@ You can scope a definition to multiple modules, creating a shared
 private space for collaboration:
 
 <!--versetest
-gameplay := module:
-    SharedGameplayScope := scoped{inventory, crafting}
+Gameplay := module:
+    SharedGameplayScope := scoped{Inventory, Crafting}
 
     Item<SharedGameplayScope> := class:
         ID<public>:int
@@ -287,14 +287,14 @@ gameplay := module:
 
     CreateItem<SharedGameplayScope>(TheID:int):Item = Item{ID:=TheID, Properties:=map{}}
 
-inventory := module:
-    using{gameplay}
+Inventory := module:
+    using{Gameplay}
 
     AddToInventory(ItemID:int):void =
         NewItem := CreateItem(ItemID)
 
-crafting := module:
-    using{gameplay}
+Crafting := module:
+    using{Gameplay}
 
     CraftItem(Recipe:[]int)<decides>:Item =
         CreateItem(Recipe[0])
@@ -302,9 +302,9 @@ crafting := module:
 -->
 <!-- 07 -->
 ```verse
-gameplay := module:
+Gameplay := module:
     # This scope includes both the inventory and crafting modules
-    SharedGameplayScope := scoped{inventory, crafting}
+    SharedGameplayScope := scoped{Inventory, Crafting}
 
     # Items can be accessed by both inventory and crafting
     Item<SharedGameplayScope> := class:
@@ -314,15 +314,15 @@ gameplay := module:
     # Factory function available to both systems
     CreateItem<SharedGameplayScope>(TheID:int):Item = Item{ID:=TheID, Properties:=map{}}
 
-inventory := module:
-    using{gameplay}
+Inventory := module:
+    using{Gameplay}
 
     AddToInventory(ItemID:int):void =
         NewItem := CreateItem(ItemID)  # Can access scoped function
         # Implementation...
 
-crafting := module:
-    using{gameplay}
+Crafting := module:
+    using{Gameplay}
 
     CraftItem(Recipe:[]int)<decides>:Item =
         # Can create items and access their properties
@@ -384,19 +384,19 @@ path to it:
 
 <!-- NoCompile -->
 ```verse
-outer := module:
+Outer := module:
     # Internal to outer
-    inner := module:
-        # Scoped to target_module
-        SharedClass<scoped{target_module}> := class:
+    Inner := module:
+        # Scoped to TargetModule
+        SharedClass<scoped{TargetModule}> := class:
             Value:int = 42
 
-target_module := module:
-    using{outer}
+TargetModule := module:
+    using{Outer}
 
-    # ERROR: Can't see outer.inner because inner is internal to outer
+    # ERROR: Can't see Outer.Inner because Inner is internal to Outer
     # even though SharedClass is scoped to us
-    UseShared():void = outer.inner.SharedClass{}
+    UseShared():void = Outer.Inner.SharedClass{}
 ```
 
 For scoped access to work, either the containing scope must be
@@ -452,9 +452,9 @@ not exposed as part of the public interface:
 
 <!-- NoCompile -->
 ```verse
-networking := module:
+Networking := module:
     # Public scope for modules that need network access
-    NetworkScope<public> := scoped{player_system, matchmaking, telemetry}
+    NetworkScope<public> := scoped{PlayerSystem, Matchmaking, Telemetry}
 
     # Core networking available to specific systems
     SendPacket<NetworkScope>(Data:[]uint8):void =
@@ -1272,7 +1272,7 @@ RefMessage<localizes>(Greeting:string) : message =
 Localized messages support standard access specifiers:
 
 <!--versetest
-my_module := module:
+MyModule := module:
     PublicMessage<localizes><public> : message = "Public message"
     InternalMessage<localizes> : message = "Internal message"
 
@@ -1282,7 +1282,7 @@ my_module := module:
 -->
 <!-- 40 -->
 ```verse
-my_module := module:
+MyModule := module:
     PublicMessage<localizes><public> : message = "Public message"
     InternalMessage<localizes> : message = "Internal message"
 

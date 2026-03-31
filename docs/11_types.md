@@ -826,8 +826,8 @@ assert_semantic_error(3512, 3502):
     bad_type := type{_X:float where _X < GetMax()}
 
 assert_semantic_error(3506, 3502):
-    config := module{Max:float = 100.0}
-    bad_type := type{_X:float where _X < (config:)Max}
+    Config := module{Max:float = 100.0}
+    bad_type := type{_X:float where _X < (Config:)Max}
 <#
 -->
 <!-- 37 -->
@@ -844,8 +844,8 @@ GetMax():float = 100.0
 bad_type := type{_X:float where _X < GetMax()}  # ERROR
 
 # Invalid: cannot use qualified names
-config := module{Max:float = 100.0}
-bad_type := type{_X:float where _X < (config:)Max}  # ERROR
+Config := module{Max:float = 100.0}
+bad_type := type{_X:float where _X < (Config:)Max}  # ERROR
 ```
 <!-- #> -->
 

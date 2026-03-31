@@ -30,10 +30,10 @@ This index provides quick access to key concepts, language features, and importa
 - **comparable** - equality testing: [Type System](11_types.md)
 - **parametric types** - generics: [Classes - Parametric Classes](10_classes_interfaces.md#parametric-classes), [Type System](11_types.md)
 - **type{}** - type expressions: [Expressions](01_expressions.md), [Primitives - Type type](02_primitives.md#type-type), [Type System](11_types.md)
-- **where clauses** - type constraints: [Overview](00_overview.md), [Functions](06_functions.md), [Classes - Parameter Constraints](10_classes_interfaces.md#parameter-constraints), [Type System](11_types.md)
+- **where clauses** - type constraints: [Overview](00_overview.md), [Functions](06_functions.md), [Classes - Advanced Type Constraints](10_classes_interfaces.md#advanced-type-constraints), [Type System](11_types.md)
 
 ### Type Variance
-- **covariance** - type compatibility: [Classes - Covariant](10_classes_interfaces.md#covariant), [Type System - Covariance](11_types.md#covariance)
+- **covariance** - type compatibility: [Classes - Covariant](10_classes_interfaces.md#covariant)
 - **contravariance** - reverse compatibility: [Type System](11_types.md)
 - **invariance** - exact type match: [Type System](11_types.md)
 - **bivariance** - both directions: [Type System](11_types.md)
@@ -120,7 +120,6 @@ This index provides quick access to key concepts, language features, and importa
 - **upon** - one-shot reactive behavior: [Live Variables - The upon Expression](15_live_variables.md#the-upon-expression)
 - **when** - continuous reactive behavior: [Live Variables - The when Expression](15_live_variables.md#the-when-expression)
 - **batch** - group variable updates: [Live Variables - The batch Expression](15_live_variables.md#the-batch-expression)
-- **Old()** - access previous value: [Live Variables - Recursive Targets](15_live_variables.md#recursive-targets)
 
 ### Live Variable Features
 - **input-output variables** - bidirectional sync: [Live Variables - Input-Output Variables](15_live_variables.md#input-output-variables)
