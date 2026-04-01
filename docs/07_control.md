@@ -995,12 +995,34 @@ Defer is **scope-based**, not function-based. A `defer` block executes
 when leaving the scope that directly contains it, including:
 
 - **Function bodies** — runs when the function returns
-- **Each iteration of `for` loops** — runs at the end of each iteration
-- **Each iteration of `loop` blocks** — runs at the end of each iteration (including on `break`)
+- **`for` loops** — the `for` body runs each iteration in its own
+  scope; the `for` domain also introduces a lexical scope
+- **Each iteration of `loop` blocks** — runs at the end of each
+  iteration (including on `break`)
 - **`if`/`then`/`else` clauses** — runs when leaving the chosen branch
 - **`block` scopes** — runs when leaving the block
-- **`defer` blocks themselves** — nested defers run when the outer defer completes
-- **Cancelled concurrent scopes** (`race`, `branch`, `spawn`) — runs during cancellation unwinding (see [Concurrency](14_concurrency.md#cleanup-and-resource-management))
+- **`not` expressions** — `not e` evaluates `e` in a new lexical scope
+- **`or` expressions** — `e0 or e1` evaluates `e0` in a new lexical
+  scope
+- **`and` expressions** — `e0 and e1` evaluates the entire expression
+  in a new lexical scope
+- **`option` and `logic` expressions** — `option{e}` and `logic{e}`
+  evaluate `e` in a new lexical scope
+- **`case` expressions** — `case(e0){e1=>e2, e3=>e4}` creates a
+  lexical scope for the whole `case`, and then for each result
+  expression (`e2`, `e4`)
+- **Archetype instantiation** — `my_class{...}` introduces a lexical
+  scope for the body
+- **`defer` blocks themselves** — nested defers run when the outer
+  defer completes
+- **Structured concurrency macros** (`race`, `rush`, `branch`) —
+  each arm runs in its own lexical scope
+- **`spawn`, `await`, and `batch` expressions** — `spawn{e}`,
+  `await{e}`, and `batch{e}` evaluate `e` in a new lexical scope
+- **`live` bindings** — `live Name : e0 = e1` creates a new lexical
+  scope for `e1`
+- **Cancelled concurrent scopes** — runs during cancellation
+  unwinding (see [Concurrency](14_concurrency.md#cleanup-and-resource-management))
 
 Here is a basic example:
 
