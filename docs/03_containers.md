@@ -139,7 +139,7 @@ G():void =
 
 Tuples also play a role in structured concurrency. The `sync` expression produces a tuple of results, allowing several computations that unfold over time to be evaluated simultaneously. In this way, tuples provide not only a convenient grouping mechanism but also a foundation for composing concurrent computations.
 
-Tuples can also be automatically converted to arrays when used with array concatenation operators `+` and `+=`. See [Tuples with Array Operators](#tuples-with-array-operators) for more details.
+Tuples can also be automatically converted to arrays when used with array concatenation operators `+` and `+=`. See [From Tuples to Arrays](#from-tuples-to-arrays) for more details.
 
 ## Arrays
 

@@ -329,7 +329,7 @@ The `logic{}` expression requires at least a superficial possibility of failure.
 Valid := logic{false?}               # OK: false? can fail
 ```
 
-Multiple expressions inside `logic{}` can be separated by semicolons or commas (see [Semicolons vs Commas](#semicolons-vs-commas-sequences-and-tuples) for details):
+Multiple expressions inside `logic{}` can be separated by semicolons or commas (see [Semicolons vs Commas](#semicolons-vs-commas) for details):
 
 <!--versetest-->
 <!-- 19 -->
@@ -880,7 +880,7 @@ for (I := 0..Count):  # Must use := syntax, not :
 
 Ranges are not first-class values. They cannot be stored in variables
 or used outside of `for` loop iteration clauses. See the [Range
-Operator Restrictions](07_control.md#range-operator-restrictions)
+Operator Restrictions](07_control.md#for-expressions)
 section for details.
 
 ### Logical Operations
@@ -1356,7 +1356,7 @@ block:
 Expressions within a compound can be separated by semicolons, commas,
 or newlines. Semicolons and newlines create sequences (returning the
 last value), while commas create tuples. See [Semicolons vs
-Commas](#semicolons-vs-commas-sequences-and-tuples) for the complete
+Commas](#semicolons-vs-commas) for the complete
 rules:
 
 <!--versetest

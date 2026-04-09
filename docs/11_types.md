@@ -1269,7 +1269,7 @@ as map keys, including:
 
 Note that while `float` can be used as a map key, floating-point
 special values have specific equality semantics (see [Map
-documentation](02_primitives.md#floating-point-keys) for details on
+documentation](02_primitives.md#floats) for details on
 `NaN` and zero handling).
 
 There is currently no way to make a regular class comparable by
