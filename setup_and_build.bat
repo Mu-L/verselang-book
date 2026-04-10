@@ -38,26 +38,31 @@ IF NOT DEFINED PY_PATH (
 
   ECHO %Yellow%Installing Python using available Package Managers...%NC%
   FOR /f "delims=," %%a IN ("choco,scoop,winget") DO (
+
     REM Check Chocolatey Installation
-    WHERE /Q %%a 2>NUL
-    IF %ERRORLEVEL% EQU 0 (
+    WHERE /Q %%a
+    IF !ERRORLEVEL! EQU 0 (
       SET InstallCmd=choco install python
       GOTO ExecInstallCmd
     )
   
     REM Check Scoop Installation
-    WHERE /Q %%b 2>NUL
-    IF %ERRORLEVEL% EQU 0 (
+    WHERE /Q %%b
+    IF !ERRORLEVEL! EQU 0 (
       SET InstallCmd=scoop install python
       GOTO ExecInstallCmd
     )
 
-  REM Check Winget Installation
-    WHERE /Q %%c 2>NUL
-    IF %ERRORLEVEL% EQU 0 (
+    REM Check Winget Installation
+    WHERE /Q %%c
+    IF !ERRORLEVEL! EQU 0 (
       SET InstallCmd=winget install --id Python.Python.3.12
       GOTO ExecInstallCmd
     )
+
+    REM No Package Managers available
+    ECHO %RED%Please Install a Python Version greater than 3.8 Manually%NC%
+    EXIT /B 1
   )
 ) ELSE (
   ECHO %GREEN%Python Installation Found. Testing if Version is greater than 3.8%NC%
@@ -72,7 +77,7 @@ IF DEFINED DRY_RUN (
   ECHO Dry Run: %InstallCmd%
   EXIT /B 0
 ) ELSE (
-  CALL "%InstallCmd%"
+  CALL %InstallCmd%
   GOTO CheckPythonInstallation
 )
 
@@ -89,7 +94,7 @@ IF DEFINED VERSION (
       )  
     )
 
-    ECHO %RED%Please Install a Python Version greater than 3.8
+    ECHO %RED%Please Install a Python Version greater than 3.8%NC%
     EXIT /B 1
   )
 )
