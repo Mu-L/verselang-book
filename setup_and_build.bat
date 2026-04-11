@@ -10,8 +10,8 @@ REM Setup for Forground Colors
 SETLOCAL EnableExtensions
 SETLOCAL DisableDelayedExpansion
 
-for /F %%a in ('ECHO prompt $E ^| cmd') do (
-  set "ESC=%%a"
+FOR /F %%a IN ('ECHO PROMPT $E ^| cmd') DO (
+  SET "ESC=%%a"
 )
 
 SETLOCAL EnableDelayedExpansion
@@ -35,35 +35,31 @@ FOR /f "tokens=2*" %%a IN ('REG QUERY %Key% /ve') DO SET "PY_PATH=%%bpython.exe"
 
 IF NOT DEFINED PY_PATH (
   ECHO %Yellow%No Python Installation Found%NC%
-
   ECHO %Yellow%Installing Python using available Package Managers...%NC%
-  FOR /f "delims=," %%a IN ("choco,scoop,winget") DO (
-
-    REM Check Chocolatey Installation
-    WHERE /Q %%a
-    IF !ERRORLEVEL! EQU 0 (
-      SET InstallCmd=choco install python
-      GOTO ExecInstallCmd
-    )
-  
-    REM Check Scoop Installation
-    WHERE /Q %%b
-    IF !ERRORLEVEL! EQU 0 (
-      SET InstallCmd=scoop install python
-      GOTO ExecInstallCmd
-    )
-
-    REM Check Winget Installation
-    WHERE /Q %%c
-    IF !ERRORLEVEL! EQU 0 (
-      SET InstallCmd=winget install --id Python.Python.3.12
-      GOTO ExecInstallCmd
-    )
-
-    REM No Package Managers available
-    ECHO %RED%Please Install a Python Version greater than 3.8 Manually%NC%
-    EXIT /B 1
+  REM Check Chocolatey Installation
+  WHERE /Q choco
+  IF !ERRORLEVEL! EQU 0 (
+    SET InstallCmd=choco install python
+    GOTO ExecInstallCmd
   )
+  
+  REM Check Scoop Installation
+  WHERE /Q scoop
+  IF !ERRORLEVEL! EQU 0 (
+    SET InstallCmd=scoop install python
+    GOTO ExecInstallCmd
+  )
+
+  REM Check Winget Installation
+  WHERE /Q winget
+  IF !ERRORLEVEL! EQU 0 (
+    SET InstallCmd=winget install --id Python.Python.3.12
+    GOTO ExecInstallCmd
+  )
+
+  REM No Package Managers available
+  ECHO %RED%Please Install a Python Version greater than 3.8 Manually%NC%
+  EXIT /B 1
 ) ELSE (
   ECHO %GREEN%Python Installation Found. Testing if Version is greater than 3.8%NC%
   FOR /f %%i in ('CALL "%PY_PATH%" "-c" "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"') DO (
@@ -73,13 +69,8 @@ IF NOT DEFINED PY_PATH (
 )
 
 :ExecInstallCmd
-IF DEFINED DRY_RUN (
-  ECHO Dry Run: %InstallCmd%
-  EXIT /B 0
-) ELSE (
-  CALL %InstallCmd%
-  GOTO CheckPythonInstallation
-)
+CALL %InstallCmd%
+GOTO CheckPythonInstallation 
 
 :TestVersion
 IF DEFINED VERSION (
