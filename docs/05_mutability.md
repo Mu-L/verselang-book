@@ -28,11 +28,11 @@ point := struct<computes>:
     X:float = 0.0
     Y:float = 0.0
 
+# These values are eternal - Origin will always be (0, 0)
 Origin := point{}
 UnitX := point{X := 1.0}
 UnitY := point{Y := 1.0}
 
-# These values are eternal - Origin will always be (0, 0)
 Distance(P1:point, P2:point)<reads>:float =
     DX := P2.X - P1.X
     DY := P2.Y - P1.Y
