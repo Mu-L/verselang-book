@@ -546,6 +546,54 @@ sequentially. When you import a nested module directly, Verse needs to
 know about its parent module first. This is why importing the parent
 before the child always works, while the reverse order fails.
 
+### Module Aliases with import
+
+The `import` expression creates a local alias for a module, binding
+its path to a name. Unlike `using`, which brings a module's public
+members directly into scope, `import` lets you access them through
+the alias with dot notation:
+
+<!--NoCompile-->
+<!-- 14b -->
+```verse
+# using: members available directly
+using { /MyProject/Utilities }
+Result := HelperFunction()  # HelperFunction is in scope
+
+# import: members accessed through alias
+Utils := import(/MyProject/Utilities)
+Result := Utils.HelperFunction()  # accessed via alias
+```
+
+This is useful when you want to avoid name collisions, or when you
+need to make the origin of a definition explicit in your code:
+
+<!--NoCompile-->
+<!-- 14c -->
+```verse
+Physics := import(/MyProject/Systems/Physics)
+Graphics := import(/MyProject/Systems/Graphics)
+
+# Clear which Transform is being used
+PhysicsTransform := Physics.Transform{}
+GraphicsTransform := Graphics.Transform{}
+```
+
+Module aliases created with `import` are visible across all snippets
+within the same module. An `import` can also be combined with `using`
+to both alias a module and bring its members into scope:
+
+<!--NoCompile-->
+<!-- 14d -->
+```verse
+Graphics := import(/MyProject/Systems/Graphics)
+using { Graphics }  # now Graphics members are also directly available
+```
+
+Note that `import` only works with module paths. Attempting to import
+a path that resolves to a class or other non-module definition is an
+error.
+
 ### Scope and Visibility
 
 Imports have file scope - they only affect the file in which they
