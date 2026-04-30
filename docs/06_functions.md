@@ -72,13 +72,13 @@ After the first named parameter, all subsequent parameters must also be named:
 
 <!--versetest
 assert_semantic_error(3629):
-    Invalid(? Named:int, Positional:string):void = {}
+    Invalid(?Named:int, Positional:string):void = {}
 <#
 -->
 <!-- 04-->
 ```verse
 # Invalid: named followed by positional
-Invalid(? Named:int, Positional:string):void = {}  # ERROR
+Invalid(?Named:int, Positional:string):void = {}  # ERROR
 ```
 <!-- #>-->
 
