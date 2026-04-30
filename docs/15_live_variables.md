@@ -237,9 +237,9 @@ exposing the constrained value publicly.
 
 ### Restricted Effects and Stability
 
-Live variable guards cannot have `<writes>` or `<allocates>`
-effects. This fundamental restriction prevents side effects during
-guard evaluation, which Verse must be able to perform freely whenever
+Live variable guards cannot have the `<writes>` effect. This
+fundamental restriction prevents side effects during guard
+evaluation, which Verse must be able to perform freely whenever
 dependencies change.
 
 <!--NoCompile-->
@@ -420,7 +420,7 @@ set Y.Contents = X.Contents * 2
 
 The guard expression must have effects `<reads><computes><decides>`
 (see [Effects](13_effects.md))—it can read and compute but cannot
-write or allocate. This ensures re-evaluation is side-effect free.
+write. This ensures re-evaluation is side-effect free.
 The body of `await` also cannot contain `branch` expressions, since
 `branch` requires a `<suspends>` context and the guard must remain
 side-effect free.
