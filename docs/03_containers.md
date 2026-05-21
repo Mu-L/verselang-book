@@ -649,7 +649,7 @@ Array.Remove(From:int, To:int)<decides>:[]t
 ```verse
 NumArray := array{10, 20, 30, 40}
 
-if (Updated := NumArray.Remove[1,1]):
+if (Updated := NumArray.Remove[1,2]):
     # Updated is array{10, 30, 40}
 
 # Negative index would fail
