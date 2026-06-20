@@ -11,7 +11,7 @@ When developers publish code to the Verse metaverse, they enter into a social co
 <!--versetest-->
 <!-- 01 -->
 ```verse
-Thing<public>:int = 666
+Thing<public>:int = 777
 ```
 
 This seemingly straightforward declaration carries profound implications. By marking `Thing` as public, you're making a commitment that extends indefinitely into the future. Users can depend on `Thing` always existing and always being an integer. While you retain the freedom to change its actual value, the existence and type of `Thing` become permanent fixtures in the metaverse's landscape.
