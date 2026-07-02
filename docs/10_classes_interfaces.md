@@ -1231,7 +1231,7 @@ e := class(d):
     (e:)F(X:int):int = X + 2 # NEW method with same name, not an override
 
 # e now contains BOTH methods:
-#    - (d:)F inherited from d
+#    - (c:)F inherited from c (overridden in d)
 #    - (e:)F newly defined in e
 ```
 

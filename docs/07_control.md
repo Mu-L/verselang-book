@@ -546,7 +546,7 @@ Doubled := for (X := 1..5, Y := X * 2):
 
 # Combine with filtering
 SafeDivision := for (X := -3..3, X <> 0, Y := Floor[10.0 / (X*1.0)]):
-    Y  # Skips X=0, returns array{-3, -5, -10, 10, 5, 3}
+    Y  # Skips X=0, returns array{-4, -5, -10, 10, 5, 3}
 ```
 
 These intermediate variables are scoped to the iteration and can

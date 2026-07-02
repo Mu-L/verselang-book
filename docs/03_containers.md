@@ -231,7 +231,7 @@ Example : [][]int =
             Row * Column
 ```
 
-produces a triangular array with rows of increasing length: row 0 has none, row 1 has a single `0`, row 2 has `0, 2, 4`, and row 3 has `0, 3, 6, 9`.
+produces a triangular array with rows of increasing length: row 0 has a single `0`, row 1 has `0, 1`, row 2 has `0, 2, 4`, and row 3 has `0, 3, 6, 9`.
 
 Nested arrays with complex initialization work naturally as class field defaults:
 

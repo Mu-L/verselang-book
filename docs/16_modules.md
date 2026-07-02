@@ -774,7 +774,7 @@ Thing<public>:rational = 1/3
 Thing<public>:rational = 10/3
 
 # - Make the type more specific (subtype)
-Thing<public>:int = 20  # nat is a subtype of int
+Thing<public>:int = 20  # int is a subtype of rational
 
 # Invalid updates (would be rejected):
 # - Remove the member
