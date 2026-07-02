@@ -1056,8 +1056,10 @@ Understanding execution order is crucial for correct initialization:
    they're written in the archetype
 2. **Delegating constructor:** Subclass fields are initialized first,
    then the parent constructor runs
-3. **Class body blocks:** When using direct archetype construction,
-   blocks in the class definition execute before field initialization
+3. **Class body blocks:** Blocks and field initializers execute
+   together, in the order they appear in the class definition. By the
+   time a block runs, every field declared above it, including values
+   supplied by the archetype, is already initialized
 
 For delegating constructors to parent classes:
 
