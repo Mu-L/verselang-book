@@ -714,7 +714,7 @@ equivalent to the Canceled state. (alias)
 ### Task.Cancel()
 
 !!! note "Unreleased Feature"
-    The Cancel() method has not be released at this time.
+    The Cancel() method has not been released at this time.
 	
 The `Cancel()` method requests cancellation of a task. This is a safe
 operation that can be called on any task in any state:
