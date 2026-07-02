@@ -633,7 +633,7 @@ Dividend = Quotient[Dividend, Divisor] * Divisor + Mod[Dividend, Divisor]
 
 The sign of the result follows specific rules:
 
-- `Mod` result has the same sign as the divisor (Euclidean division)
+- `Mod` result is always non-negative, in the range `0 <= Result < |Divisor|` (Euclidean division)
 - `Quotient` adjusts accordingly to maintain the identity
 
 There are also some utility functions:
