@@ -333,7 +333,7 @@ ProcessComponent(Comp:component):void =
 ```
 <!-- #> -->
 
-The cast expression evaluates to `false` if the runtime type doesn't
+The cast expression fails if the runtime type doesn't
 match, allowing you to use it directly in conditionals. The optional
 binding pattern `(Variable := Expression)` both performs the cast and
 binds the result to a variable when successful.
@@ -1347,7 +1347,7 @@ In function types, `void` participates in variance:
 ```verse
 IntIdentity(X:int):int = X
 
-# Contravariant return: supertype in return position
+# Covariant return: subtype allowed in return position
 F:int->void = IntIdentity  # int->int → int->void ✓
 # void is supertype of int, so this works
 
@@ -1594,8 +1594,9 @@ compile-time type safety and runtime flexibility.
 The `subtype(T)` type constructor represents runtime type values that
 are subtypes of `T`. Unlike `concrete_subtype` and `castable_subtype`,
 which are specialized for classes and interfaces, `subtype(T)` works
-with **any type** in Verse, including primitives, enums, collections,
-and function types.
+with a wide range of types in Verse, including primitives and enums,
+not just classes and interfaces. (Collection and function types
+currently have limitations. See the note below.)
 
 <!--versetest
 animal := class<computes> {}
