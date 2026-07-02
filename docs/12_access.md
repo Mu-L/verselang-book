@@ -672,7 +672,7 @@ The `@deprecated` annotation can be applied to:
 #### @experimental
 
 !!! warning "Internal Feature"
-    @deprecated attribute is currently an internal feature and cannot be used by end-users.
+    @experimental attribute is currently an internal feature and cannot be used by end-users.
 
 The `@experimental` annotation marks features that are not yet stable
 and may change or be removed in future versions. Experimental features
@@ -1287,7 +1287,7 @@ MyModule := module:
     InternalMessage<localizes> : message = "Internal message"
 
     some_class := class:
-        PrivateMessage<localizes><private> : message = "Private message"  # private not allowed in module scopes
+        PrivateMessage<localizes><private> : message = "Private message"  # <private> is allowed here because this is class scope, not module scope
 ```
 <!-- #> -->
 
