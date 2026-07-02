@@ -1028,7 +1028,7 @@ Notice how `Health` and `TakeDamage` are qualified with `/YourPackage/player_cla
 
 **Module member qualification**: Definitions within modules are qualified with the module path:
 
-<!--MoCompile-->
+<!--NoCompile-->
 ```verse
 # What you write:
 Config := module:
