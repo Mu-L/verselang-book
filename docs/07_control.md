@@ -411,7 +411,7 @@ in the if-expression. The assignment `set B = ...` uses the value of
 the if-expression, showing that `break` is compatible in any type context.
 
 **Loop Return Value:** The loop expression itself produces a value of type
-`true` (the top type), regardless of what expressions appear in its body.
+`true`, regardless of what expressions appear in its body.
 This return value is rarely useful in practice—loops are typically used for
 their side effects.
 

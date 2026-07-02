@@ -732,9 +732,8 @@ loop {
 
 The loop construct can use indented syntax for clarity.
 
-A loop expression produces a value of type `true` (the
-top type in Verse's type system), regardless of what expressions appear in
-its body. This value is currently not useful for practical purposes—you
+A loop expression produces a value of type `true`, regardless of what
+expressions appear in its body. This value is currently not useful for practical purposes—you
 typically use loops for their side effects rather than their return value.
 
 ```verse
