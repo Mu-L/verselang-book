@@ -1287,7 +1287,7 @@ MyModule := module:
     InternalMessage<localizes> : message = "Internal message"
 
     some_class := class:
-        PrivateMessage<localizes><private> : message = "Private message"  # <private> is allowed here because this is class scope, not module scope
+        PrivateMessage<localizes><private> : message = "Private message"
 ```
 <!-- #> -->
 
