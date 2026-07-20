@@ -3168,23 +3168,74 @@ subclass must override all abstract methods or the code won't compile.
 
 ### Castable
 
-The `<castable>` specifier enables runtime type checking and safe
-downcasting for classes. When a class is marked with `<castable>`, you
-can use dynamic type tests and casts to determine if an object is an
-instance of that class or its subclasses at runtime.
+Verse supports runtime type checking for all classes and interfaces
+through **fallible casts** and **infallible casts**. The `<castable>`
+specifier serves a specific purpose: it enables the use of
+`castable_subtype` constraints, which allow types to be used as
+first-class values in type-constrained contexts.
 
-Without `<castable>`, Verse's type system operates purely at compile
-time. The `<castable>` specifier adds runtime type information,
-allowing code to inspect and react to actual object types during
-execution. This bridges the gap between static type safety and dynamic
-polymorphism.
+All classes and interfaces support runtime type checking through
+dynamic casts. You can cast between any class or interface types using the fallible cast
+syntax `Type[Value]`:
+
+<!--versetest-->
+<!-- 114a -->
+```verse
+# No <castable> needed for basic dynamic casts
+base := class:
+    ID:int
+
+derived := class(base):
+    Name:string
+
+# Fallible cast
+ProcessBase(B:base):void =
+    if (D := derived[B]):
+        # Successfully cast to derived
+        Print("Derived with name: {D.Name}")
+    else:
+        # Not a derived instance
+        Print("Just a base")
+```
+
+#### When Do You Need `<castable>`
+
+The `<castable>` specifier is required only when you want to use
+`castable_subtype` constraints. These constraints enable powerful
+patterns where types are used as first-class values, such as accepting
+a type as a parameter and using it to perform casts:
+
+<!--versetest
+component := class<castable>{}
+physics_component := class<castable>(component){}
+render_component := class<castable>(component){}
+ProcessSpecific(:component):void = {}
+-->
+<!-- 114b -->
+```verse
+# Requires <castable> for castable_subtype constraint
+FilterByType(
+    Items:[]component,
+    TargetType:castable_subtype(component)  # Type as parameter
+):[]component =
+    for:
+        Item : Items
+        Specific := TargetType[Item]  # Use type variable for cast
+    then:
+        Specific
+
+# Can pass different types at runtime
+AllComponents:[]component = array{physics_component{}, render_component{}}
+PhysicsOnly := FilterByType(AllComponents, physics_component)
+```
+
+#### Fallible and Infallible Casts
 
 Verse provides two forms of type casting: **fallible casts** (which
 can fail at runtime) and **infallible casts** (which are verified at
 compile time).
 
-**Fallible casts** use bracket syntax `Type[Value]` and return an
-optional result. These are runtime checks that succeed only if the
+Fallible casts use bracket syntax `Type[Value]` are runtime checks that succeed only if the
 value is actually an instance of the target type:
 
 <!-- versetest
@@ -3193,6 +3244,7 @@ ToString(:vector3):string=""
 -->
 <!-- 115-->
 ```verse
+# Classes with <castable> - enables castable_subtype usage
 component := class<abstract><castable><allocates>:
     Name:string
 
@@ -3204,16 +3256,13 @@ render_component := class<allocates>(component):
     Name<override>:string = "Render"
     Material:string
 
+# Fallible casts work whether or not <castable> is present
 ProcessComponent(Comp:component):void =
-    # Attempt to cast to physics_component
     if (PhysicsComp := physics_component[Comp]):
-        # Cast succeeded - PhysicsComp has type physics_component
         Print("Physics component with velocity: {PhysicsComp.Velocity}")
     else if (RenderComp := render_component[Comp]):
-        # Cast succeeded - RenderComp has type render_component
         Print("Render component with material: {RenderComp.Material}")
     else:
-        # Neither cast succeeded
         Print("Unknown component type")
 ```
 
@@ -3244,8 +3293,8 @@ if (Physics := GetPhysicsComponent[SomeComponent]):
     UpdatePhysics(Physics)
 ```
 
-**Infallible casts** use parenthesis syntax `Type(Value)` and only
-work when the compiler can verify the cast is safe—that is, when the
+Infallible casts use parenthesis syntax `Type(Value)` and are only
+allowed when the compiler can verify the cast is safe—that is, when the
 value type is a subtype of the target type:
 
 
@@ -3287,6 +3336,7 @@ compile error, as the compiler cannot guarantee safety:
 DerivedRef := derived(BaseRef)  # ERROR: not a subtype relationship
 ```
 
+
 #### Castable and Inheritance
 
 The `<castable>` property is inherited by all subclasses. When you
@@ -3315,44 +3365,79 @@ ProcessBase(Instance:base):void =
         Print("It's a grandchild: {AsGrandchild.Extra}")
 ```
 
-**Important constraint:** Parametric types cannot be `<castable>`.
-The `<castable>` specifier enables runtime type checks (dynamic
-casts), but Verse erases type parameters at runtime — only the
-concrete class exists, not the specific parametric instantiation.
-This means the runtime cannot distinguish between `container(int)`
-and `container(string)`, so allowing dynamic casts on parametric
-types would be unsound:
+#### Parametric Types and Casting
 
-<!--versetest-->
+Parametric types cannot be marked `<castable>`. Verse erases type
+parameters at runtime—only the concrete class structure exists, not the
+specific type arguments. The runtime cannot distinguish between
+`container(int)` and `container(string)`, which would make
+`castable_subtype` constraints unsound.
+
+Additionally, you cannot cast to a parametric type even if it's not
+marked `<castable>`. Attempting to use a parametric type as a cast
+target produces a compile error:
+
+<!--versetest
+assert_semantic_error(3678):
+    container(t:type) := class<castable>:
+        Value:t
+
+assert_semantic_error(3502):
+    container(t:type) := class:
+        Value:t
+    Test()<decides>:void =
+        C := container(int){Value := 42}
+        if (C2 := container(string)[C]):
+            {}
+-->
 <!-- 120-->
 ```verse
-# Valid: non-parametric castable class
-valid_castable := class<castable>:
-    Data:int
-
 # Invalid: parametric classes cannot be castable
-# invalid_castable(t:type) := class<castable>:  # ERROR
-#     Data:t
+# container(t:type) := class<castable>:  # ERROR 3678
+#     Value:t
+
+# Invalid: cannot cast to parametric type
+container(t:type) := class:
+    Value:t
+
+Test()<decides>:void =
+    C := container(int){Value := 42}
+    if (C2 := container(string)[C]):  # ERROR 3502
+        {}
 ```
 
-However, a non-parametric class can be `<castable>` even if it
-inherits from or contains parametric types:
+However, concrete instantiations of parametric types can be cast
+targets, and non-parametric classes can be marked `<castable>` even
+if they inherit from parametric types:
 
 <!--versetest
 container(t:type) := class:
     Value:t
 int_container := class<castable>(container(int)):
     Extra:string
-<#
+string_container := class<castable>(container(string)):
+    Extra:string
+Base:container(int) = int_container{Value := 42, Extra := "test"}
 -->
 <!-- 121-->
 ```verse
 container(t:type) := class:
     Value:t
 
-# Valid: concrete instantiation of parametric type
+# Valid: concrete instantiations can be cast targets
 int_container := class<castable>(container(int)):
     Extra:string
+
+string_container := class<castable>(container(string)):
+    Extra:string
+
+# Can cast to concrete instantiations
+Base:container(int) = int_container{Value := 42, Extra := "test"}
+if (IC := int_container[Base]):
+    Print("Extra: {IC.Extra}")  # Works!
+
+# Cannot cast between different instantiations
+# if (SC := string_container[Base]):  # Would fail at runtime
 ```
 <!-- #>-->
 

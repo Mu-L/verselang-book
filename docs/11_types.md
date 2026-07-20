@@ -279,13 +279,14 @@ This makes generic functions the preferred approach when you need to write reusa
 
 Verse provides two distinct casting mechanisms for classes and
 interfaces: fallible casts for runtime type checking, and infallible
-casts for compile-time verified conversions. Understanding when and
-how to use each is essential for working with inheritance hierarchies
-and polymorphic code.
+casts for compile-time verified conversions. All classes and interfaces
+support dynamic casting regardless of whether they're marked with the
+`<castable>` attribute—`<castable>` is only required for using the
+`castable_subtype` type constraint.
 
 Fallible casts use square bracket syntax `TargetType[value]` to
-perform runtime type checks. These casts succeeds and return the
-casted value (`TargetType`), and failing if the value is not of
+perform runtime type checks. These casts succeed and return the
+casted value (`TargetType`), failing if the value is not of
 a valid target type or a subtype:
 
 <!--versetest
@@ -1826,8 +1827,12 @@ EntityType:concrete_subtype(entity_base) = warrior
 
 The `castable_subtype(t)` type constructor represents types that are
 subtypes of `t` and marked with the `<castable>` specifier. This
-enables runtime type queries and dynamic casting, which is essential
-for component systems and polymorphic hierarchies:
+constraint is required when you want to use types as first-class
+values—storing them in variables, passing them as parameters, or
+returning them from functions—and then use those type values to perform
+casts. Note that the `<castable>` specifier is not required for basic
+dynamic casting; all classes and interfaces support the `Type[value]`
+cast syntax regardless of `<castable>`:
 
 <!--versetest
 entity:=class{}
