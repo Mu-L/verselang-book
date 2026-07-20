@@ -333,7 +333,7 @@ ProcessComponent(Comp:component):void =
 ```
 <!-- #> -->
 
-The cast expression evaluates to `false` if the runtime type doesn't
+The cast expression fails if the runtime type doesn't
 match, allowing you to use it directly in conditionals. The optional
 binding pattern `(Variable := Expression)` both performs the cast and
 binds the result to a variable when successful.
@@ -1347,7 +1347,7 @@ In function types, `void` participates in variance:
 ```verse
 IntIdentity(X:int):int = X
 
-# Contravariant return: supertype in return position
+# Covariant return: subtype allowed in return position
 F:int->void = IntIdentity  # int->int → int->void ✓
 # void is supertype of int, so this works
 
@@ -2201,7 +2201,7 @@ f()<reads>:void =
 
 <#
 -->
-<!-- 1215 -->
+<!-- 125 -->
 ```verse
 ComponentSet:classifiable_subset(component) = MakeClassifiableSubset()
 

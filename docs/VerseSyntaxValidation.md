@@ -82,7 +82,7 @@ game_item := class<final><persistable>:
             item_rarity.uncommon => 1.5
             item_rarity.rare => 2.0
             item_rarity.epic => 3.0
-            _ => false  # Fails if the item is legenday or unexpected
+            _ => false  # Fails if the item is legendary or unexpected
     
     # Computed property using closed-world function
     GetEffectiveValue()<transacts><decides> :int=
@@ -227,7 +227,7 @@ WaypointComponent<public> := class<final_super><abstract>(component) {
 ```
 
 ### Inline Text Example
-The example begins with Verse's rich type system. Types flow naturally through the code; many type annotations are omitted as they can be infered. When we do specify types, like `Items:[]game_item`, they document intent rather than just satisfy the compiler. The `item_rarity` enum provides type-safe constants without the boilerplate of traditional enumerations. The `item_stats` struct marked as `<persistable>` can be saved and loaded from persistent storage, essential for game saves. The `game_item` class uses `<unique>` to ensure reference equality semantics.
+The example begins with Verse's rich type system. Types flow naturally through the code; many type annotations are omitted as they can be inferred. When we do specify types, like `Items:[]game_item`, they document intent rather than just satisfy the compiler. The `item_rarity` enum provides type-safe constants without the boilerplate of traditional enumerations. The `item_stats` struct marked as `<persistable>` can be saved and loaded from persistent storage, essential for game saves. The `game_item` class is marked `<final>` and `<persistable>` so its instances can be saved and restored; because persistable data is serialized by value, such classes cannot also be `<unique>`.
 
 ### UnrealEngine.digest.verse (Simplified)
 <!--NoCompile-->

@@ -456,7 +456,7 @@ The body must have the `<transacts>` effect (see [Effects](13_effects.md)), allo
 
 The `when` expression provides continuous reactive behavior: every time a condition is true, execute some code. This creates a persistent observer that runs whenever its guard succeeds.
 
-<!--verstest-->
+<!--versetest-->
 <!-- 13 FAILURE
   Line 6: Verse compiler error V3560: Expected definition but found macro invocation.
   Line 10: Verse compiler error V3560: Expected definition but found assignment.

@@ -70,8 +70,8 @@ nav:
   - Home: index.md
   - Overview: 00_overview.md
   - Expressions: 01_expressions.md
-  - Primitives types: 02_primitives.md
-  - Containers types: 03_containers.md
+  - Primitive types: 02_primitives.md
+  - Container types: 03_containers.md
   - Operators: 04_operators.md
   - Mutability: 05_mutability.md
   - Functions: 06_functions.md

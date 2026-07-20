@@ -216,7 +216,7 @@ entities.
 A scoped access level is created using the `scoped{...}` expression,
 which takes one or more module references:
 
-<!-- NoCompile -->
+<!--NoCompile-->
 ```verse
 Collaboration := module:
     # Create a scope that includes both ModuleA and ModuleB
@@ -382,7 +382,7 @@ specific member, but doesn't make intermediate types or modules
 visible. To access a scoped member, you must be able to see the entire
 path to it:
 
-<!-- NoCompile -->
+<!--NoCompile-->
 ```verse
 Outer := module:
     # Internal to outer
@@ -450,7 +450,7 @@ Scoped access excels at creating controlled API boundaries where
 certain functionality should be shared between specific modules but
 not exposed as part of the public interface:
 
-<!-- NoCompile -->
+<!--NoCompile-->
 ```verse
 Networking := module:
     # Public scope for modules that need network access
@@ -678,7 +678,7 @@ The `@experimental` annotation marks features that are not yet stable
 and may change or be removed in future versions. Experimental features
 can only be used when the `AllowExperimental` package flag is enabled:
 
-<!-- NoCompile -->
+<!--NoCompile-->
 ```verse
 # Mark a feature as experimental
 @experimental
@@ -1103,7 +1103,7 @@ CommentedParam<localizes>(Name:string) : message = "Hello {<# comment #>Name}"
 
 Localized messages **must be defined at module or snippet scope**. They cannot be defined inside functions:
 
-<!-- NoCompile -->
+<!--NoCompile-->
 ```verse
 # Valid: module scope
 MyModule := module:
@@ -1287,7 +1287,7 @@ MyModule := module:
     InternalMessage<localizes> : message = "Internal message"
 
     some_class := class:
-        PrivateMessage<localizes><private> : message = "Private message"  # private not allowed in module scopes
+        PrivateMessage<localizes><private> : message = "Private message"
 ```
 <!-- #> -->
 

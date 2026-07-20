@@ -1269,7 +1269,7 @@ Process(X:int):string =
 
     "{IntResult}, {FloatResult}"
 
-Process(1)  # Returns "Int: 42, Float: 3.14"
+Process(1)  # Returns "int: 42, float: 3.14"
 ```
 
 Overload resolution works the same as for top-level functions.

@@ -1231,7 +1231,7 @@ e := class(d):
     (e:)F(X:int):int = X + 2 # NEW method with same name, not an override
 
 # e now contains BOTH methods:
-#    - (d:)F inherited from d
+#    - (c:)F inherited from c (overridden in d)
 #    - (e:)F newly defined in e
 ```
 
@@ -1823,7 +1823,7 @@ player := class(entity):
 consumer(t:type) := class:
     Process(Item:t):void = {}
 -->
-<!-- 54-->
+<!-- 541-->
 ```verse
 # Contravariance allows supertype → subtype
 EntityConsumer:consumer(entity) = consumer(entity){}
@@ -2825,7 +2825,7 @@ player_component := class(advanced_component):
     Update<override>():void = {}
     AdvancedUpdate<override>():void = {}
 -->
-<!-- 104-->
+<!-- 1041-->
 ```verse
 C1 := player_component{}
 C2 := player_component{}
@@ -2862,7 +2862,7 @@ game_object := class(updateable, renderable):
     Update<override>():void = {}
     Render<override>():void = {}
 -->
-<!-- 105-->
+<!-- 1051-->
 ```verse
 # game_object is comparable because renderable is unique
 G1 := game_object{}
@@ -2899,7 +2899,7 @@ token := class<unique>:
 container := class:
     MyToken:token = token{}
 -->
-<!-- 106-->
+<!-- 1061-->
 ```verse
 C1 := container{}
 C2 := container{}
@@ -2940,7 +2940,7 @@ with_optional := class:
 with_map := class:
     ItemMap:[int]item = map{0 => item{}}
 -->
-<!-- 107-->
+<!-- 1071-->
 ```verse
 A := with_array{}
 B := with_array{}

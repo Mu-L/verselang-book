@@ -411,7 +411,7 @@ in the if-expression. The assignment `set B = ...` uses the value of
 the if-expression, showing that `break` is compatible in any type context.
 
 **Loop Return Value:** The loop expression itself produces a value of type
-`true` (the top type), regardless of what expressions appear in its body.
+`true`, regardless of what expressions appear in its body.
 This return value is rarely useful in practice—loops are typically used for
 their side effects.
 
@@ -546,7 +546,7 @@ Doubled := for (X := 1..5, Y := X * 2):
 
 # Combine with filtering
 SafeDivision := for (X := -3..3, X <> 0, Y := Floor[10.0 / (X*1.0)]):
-    Y  # Skips X=0, returns array{-3, -5, -10, 10, 5, 3}
+    Y  # Skips X=0, returns array{-4, -5, -10, 10, 5, 3}
 ```
 
 These intermediate variables are scoped to the iteration and can
