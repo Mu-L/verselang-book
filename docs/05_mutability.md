@@ -333,6 +333,18 @@ Original.Level = 5   # unchanged, they're independent copies
 
 This deep-copy semantics extends to all value types: structs, arrays, maps, and tuples. When you pass a struct to a function, the function receives its own copy. When you store a struct in a container, the container holds a copy. This prevents aliasing and makes reasoning about struct mutations local and predictable.
 
+<!--versetest-->
+<!-- 16001 -->
+```verse
+# Arrays also have value semantics - assignments create copies
+var Original:[]int = array{1, 2, 3}
+var Copy:[]int = Original
+
+set Copy[0] = 999
+Original[0] = 1  # unchanged, they're independent copies
+Copy[0] = 999
+```
+
 ### Class Mutability: Reference Semantics
 
 Classes behave differently. They have reference semantics — when you assign a class instance, you're sharing a reference to the same object, not creating a copy. The `var` annotation on a class variable only affects whether that variable can be reassigned to reference a different object. It doesn't affect the mutability of the object's fields.
@@ -354,7 +366,7 @@ assert:
     Player2.Health = 75.0
 <#
 -->
-<!-- 17 -->
+<!-- 18 -->
 ```verse
 game_character := class:
     Name:string = "Hero"
@@ -389,7 +401,7 @@ assert:
     Box.MutableData = 42
 <#
 -->
-<!-- 18 -->
+<!-- 19 -->
 ```verse
 container := class:
     ImmutableData:point= point{}  # Always immutable
@@ -411,7 +423,7 @@ Arrays and maps follow struct semantics—they are values, not references. When 
 Mutable arrays allow element replacement:
 
 <!--versetest-->
-<!-- 19 -->
+<!-- 20 -->
 ```verse
 var Nums:[]int = array{0, 1}
 Nums[0] = 0
@@ -429,7 +441,7 @@ Nums[1] = 666
 You cannot add elements beyond the array's current length:
 
 <!--versetest-->
-<!-- 20 -->
+<!-- 21 -->
 ```verse
 var A:[]int = array{0}
 not (set A[1] = 1)  # Fails - index out of bounds
@@ -441,7 +453,7 @@ not (set A[1] = 1)  # Fails - index out of bounds
 Mutable maps allow both updating existing keys and adding new keys:
 
 <!--versetest-->
-<!-- 21 -->
+<!-- 22 -->
 ```verse
 var Scores:[int]int = map{0 => 1, 1 => 2}
 set Scores[1] = 42
@@ -459,7 +471,7 @@ set Config["brightness"] = 75
 Looking up a non-existent key doesn't add it:
 
 <!--versetest-->
-<!-- 22 -->
+<!-- 23 -->
 ```verse
 M:[int]int := map{}
 not (M[0] = 0)  # Key doesn't exist, comparison fails
@@ -471,7 +483,7 @@ not (M[0] = 0)  # Key doesn't exist, comparison fails
 Verse does not have a direct "delete" or "remove" operation for maps. To remove keys, create a new map that excludes the unwanted keys by iterating over the original map:
 
 <!--versetest-->
-<!-- 23 -->
+<!-- 24 -->
 ```verse
 var Scores:[string]int = map{"Alice" => 100, "Bob" => 85, "Charlie" => 92}
 
@@ -497,7 +509,7 @@ Collections can be nested, and `set` works through multiple levels:
 **Map of arrays:**
 
 <!--versetest-->
-<!-- 24 -->
+<!-- 25 -->
 ```verse
 var Data:[int][]int = map{}
 set Data[666] = array{42}
@@ -512,7 +524,7 @@ Data[666] = array{1234}
 **Array of maps:**
 
 <!--versetest-->
-<!-- 25 -->
+<!-- 26 -->
 ```verse
 var Grid:[][int]int = array{map{}}
 
@@ -535,7 +547,7 @@ Grid[0][42] = 1122
 **Array of arrays:**
 
 <!--versetest-->
-<!-- 26 -->
+<!-- 27 -->
 ```verse
 var Matrix:[][]int = array{array{1234}}
 set Matrix[0][0] = 42
@@ -552,7 +564,7 @@ Matrix[0][0] = 666
 All nested levels should exist to use `set`, if any of the higher levels don't exist, the entire set will fail.
 
 <!--versetest-->
-<!-- 27 -->
+<!-- 28 -->
 ```verse
 var Grid:[string][]int = map{"apples"=>array{1,2,3,4}}
 
@@ -568,7 +580,7 @@ set Grid["apples"][2] = 7      # OK - changes nested array element "3" to "7"
 Extracting a value from a mutable collection creates an independent copy:
 
 <!--versetest-->
-<!-- 28 -->
+<!-- 29 -->
 ```verse
 var X:[][int]int = array{map{42 => 1122, 1234 => 4321}}
 
@@ -597,7 +609,7 @@ When collections contain classes or structs with mutable fields, you can mutate 
 my_class := class:
     var X:[]int = array{0}
 -->
-<!-- 29 -->
+<!-- 30 -->
 ```verse
 C := my_class{}
 set C.X[0] = 4266642
@@ -609,7 +621,7 @@ C.X[0] = 4266642
 <!--versetest
 my_class := class{  var X:int = 0 }
 -->
-<!-- 30 -->
+<!-- 31 -->
 ```verse
 var M:[int]my_class = map{0 => my_class{}}
 M[0].X = 0
@@ -622,7 +634,7 @@ M[0].X = 30
 The map constructed from a `var` doesn't track changes to the source variable:
 
 <!--versetest-->
-<!-- 31 -->
+<!-- 32 -->
 ```verse
 var I:int = 42
 M:[int]int = map{0 => I}
@@ -640,7 +652,7 @@ When you store structs in an array, each element is an independent copy:
 my_struct := struct<computes>:
     I:int = 10
 -->
-<!-- 32 -->
+<!-- 33 -->
 ```verse
 S := my_struct{I := 88}
 var A : []my_struct = array{S, S}
@@ -665,7 +677,7 @@ Arrays of classes behave very differently—all references to the same object sh
 my_class := class:
     var I:int = 20
 -->
-<!-- 33 -->
+<!-- 34 -->
 ```verse
 C := my_class{}
 var A:[]my_class = array{C, C, C}
@@ -703,7 +715,7 @@ Verse supports compound assignment operators that combine arithmetic with mutati
 my_struct:= struct<computes>:
     A:int = 10
 -->
-<!-- 34 -->
+<!-- 35 -->
 ```verse
 var S:my_struct = my_struct{}
 
@@ -729,7 +741,7 @@ Available compound operators:
 Compound assignments work anywhere regular assignment does:
 
 <!--versetest-->
-<!-- 35 -->
+<!-- 36 -->
 ```verse
 var Score:int = 100
 set Score += 50
@@ -748,7 +760,7 @@ Array concatenation with `+=` works on struct fields, nested fields,
 and collection values, just like regular `set` does:
 
 <!--versetest-->
-<!-- 35b -->
+<!-- 35001 -->
 ```verse
 my_struct := struct<computes>:
     X:[]int = array{}
@@ -785,7 +797,7 @@ A[0] = array{1, 2}
 Tuples can be replaced entirely but individual elements cannot be mutated:
 
 <!--versetest-->
-<!-- 36 -->
+<!-- 37 -->
 ```verse
 var T0:tuple(int, int) = (10, 20)
 T0(0) = 10
@@ -806,7 +818,7 @@ assert_semantic_error(3509):
         set T0(0) = 70
 <#
 -->
-<!-- 37 -->
+<!-- 38 -->
 ```verse
 var T0:tuple(int, int) = (50, 60)
 set T0(0) = 70  # ERROR: Cannot mutate tuple elements
@@ -822,7 +834,7 @@ Maps preserve **insertion order**, and this order is maintained through mutation
 #### New Keys Append to End
 
 <!--versetest-->
-<!-- 38 -->
+<!-- 39 -->
 ```verse
 var M:[int]int = map{2 => 2}
 
@@ -842,7 +854,7 @@ M = map{2 => 2, 1 => 1, 0 => 0}
 #### Updating Existing Keys Preserves Position
 
 <!--versetest-->
-<!-- 39 -->
+<!-- 40 -->
 ```verse
 var M:[string]int = map{"a" => 3, "b" => 1, "c" => 2}
 
@@ -861,7 +873,7 @@ M = map{"a" => 2, "b" => 1, "c" => 0}  # Still same order
 Map equality considers both keys/values **and order**:
 
 <!--versetest-->
-<!-- 40 -->
+<!-- 41 -->
 ```verse
 var M:[string]int = map{"a" => 3, "b" => 1, "c" => 2}
 set M["a"] = 0
@@ -891,7 +903,7 @@ assert_semantic_error(3509):
         set CX.AI = 30
 <#
 -->
-<!-- 41 -->
+<!-- 42 -->
 ```verse
 classX := class:
     X:int = 20  # Immutable field
@@ -909,7 +921,7 @@ This restriction applies even when the class instance itself is mutable. Only `v
 Only structs marked `<computes>` (pure structs) allow field mutation through a variable:
 
 <!--versetest-->
-<!-- 42 -->
+<!-- 43 -->
 ```verse
 # OK: <computes> struct allows field mutation
 my_mutable_struct := struct<computes>{M:int = 0, J:float = 3.0}
@@ -946,7 +958,7 @@ assert_semantic_error(3509):
         set S.C.Field.Value = 10
 <#
 -->
-<!-- 43 -->
+<!-- 44 -->
 ```verse
 struct0 := struct<computes>{A:int = 10}
 struct1 := struct<computes>{S0:struct0 = struct0{}}
@@ -964,7 +976,7 @@ The error occurs because `CI` is an immutable field (not declared with `var`). *
 Even with a mutable index, you cannot mutate an immutable array:
 
 <!--NoCompile-->
-<!-- 44 -->
+<!-- 45 -->
 ```verse
 var I:int = 2  # Mutable index
 A:[]int = array{5, 6, 7}  # Immutable array
@@ -974,7 +986,7 @@ set A[I] = 2  # ERROR: A is not var - mutability of I doesn't matter
 The array itself must be declared `var` to allow element mutation:
 
 <!--versetest-->
-<!-- 45 -->
+<!-- 46 -->
 ```verse
 I:int = 2
 var A:[]int = array{5, 6, 7}
@@ -996,7 +1008,7 @@ assert:
     not (Item1 = Item3)
 <#
 -->
-<!-- 46 -->
+<!-- 47 -->
 ```verse
 unique_item := class<unique>:
     var Count:int = 0
