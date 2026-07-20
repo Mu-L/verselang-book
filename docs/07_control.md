@@ -961,9 +961,8 @@ GetDiscount(Price:float):float =
     Price * 0.1  # Implicit return with 10% discount
 ```
 
-In functions with the `<decides>` effect, `return` allows you to
-provide successful values from early exits, while still allowing other
-paths to fail:
+The `return` statement allows you to provide successful values from early
+exits, while still allowing other paths to fail:
 
 <!--versetest
 config:=struct{MaxRetries:int}
