@@ -9,9 +9,9 @@ approach. Instead of asking "is this true?", Verse asks "does this
 succeed?"
 
 This distinction might seem subtle, but it changes how programs are
-written and reasoned about. Failure isn't an error or an
-exception-it's a first-class concept that drives control flow. When an
-expression fails, it doesn't crash your program or throw an exception
+written and reasoned about. Failure is not an error or an
+exception-it is a first-class concept that drives control flow. When an
+expression fails, it does not crash your program or throw an exception
 that needs to be caught. Instead, failure is a normal, expected
 outcome that your code handles gracefully through the structure of the
 language itself.
@@ -49,9 +49,9 @@ behavior from accessing invalid indices.
 
 ## Failable Expressions
 
-A failable expression is one that can either succeed and produce a value, or fail and produce nothing. This isn't the same as returning null or an error code - when an expression fails, it literally produces no value at all. The computation stops at that point in that particular path of execution.
+A failable expression is one that can either succeed and produce a value, or fail and produce nothing. This is not the same as returning null or an error code - when an expression fails, it literally produces no value at all. The computation stops at that point in that particular path of execution.
 
-Many operations are naturally failable. Array indexing fails when the index is out of bounds. Map lookups fail when the key doesn't exist. Comparisons fail when the values aren't equal. Division fails when dividing by zero. Even simple literals can be made to fail:
+Many operations are naturally failable. Array indexing fails when the index is out of bounds. Map lookups fail when the key does not exist. Comparisons fail when the values are not equal. Division fails when dividing by zero. Even simple literals can be made to fail:
 
 <!--versetest
 M()<decides>:void =
@@ -82,7 +82,7 @@ ValidateAge(Age:int)<decides>:int =
 ```
 <!-- ValidateAge[10] -->
 
-This function doesn't just check conditions - it embodies them. If the age is invalid, the function fails. If it's valid, it succeeds with the age value. The validation and the value are inseparable.
+This function does not just check conditions - it embodies them. If the age is invalid, the function fails. If it is valid, it succeeds with the age value. The validation and the value are inseparable.
 
 ## Failure Contexts
 
@@ -174,7 +174,7 @@ m:=module:
 ```
 
 If the check fails, the subtraction is automatically rolled back. You
-don't need to manually restore the original value or check conditions
+do not need to manually restore the original value or check conditions
 before modifying state.
 
 This transactional behavior makes complex state updates safe and
@@ -247,7 +247,7 @@ Weapon := PrimaryWeapon[] or SecondaryWeapon[] or DefaultWeapon?
 ```
 
 This tries each option in order, stopping at the first success. It's
-not evaluating boolean conditions - it's attempting computations and
+not evaluating boolean conditions - it is attempting computations and
 taking the first one that succeeds.
 
 You can combine these operators to create sophisticated control flow:
@@ -279,7 +279,7 @@ try to see if a complex operation would succeed.
 
 A subtle feature is how relational expressions behave in decides
 contexts. When a comparison appears in a context that can handle
-failure, it doesn't just test a condition—it produces a value,
+failure, it does not just test a condition—it produces a value,
 specifically it returns its left-hand side. So `X>0` returns `X` and
 `0<=X` returns `0`.  This behavior applies to all comparison operators
 in decides contexts:
@@ -625,7 +625,7 @@ ValidateScore(Score:int)<decides>:?int =
 The distinction between function-level and value-level failure lets
 you express different kinds of errors. Function-level failure
 typically means "this operation couldn't complete" while value-level
-failure means "the operation completed but the result doesn't meet the
+failure means "the operation completed but the result does not meet the
 expected criteria."
 
 ## Casts as Decides
@@ -903,7 +903,7 @@ UsePlayer(P:string):void=return
 -->
 <!-- 57 -->
 ```verse
-# This won't compile - ProcessPlayer doesn't have <decides>
+# This will not compile - ProcessPlayer does not have <decides>
 # BadProcessPlayer(Name:string):void =
 #    Player := FindPlayer[Name]  # ERROR: Unhandled failure
 
@@ -1038,6 +1038,6 @@ Working effectively with failure in Verse requires a shift in mindset. Instead o
 
 This perspective makes code more readable and intent more clear. When you see a function marked with `<decides>`, you know it represents a computation that might not have a result. When you see expressions in sequence within a failure context, you know they represent conditions that must all be met. When you see the `or` operator, you know it represents alternatives to try.
 
-Failure in Verse isn't something to be feared or avoided - it's a tool to be embraced. It makes programs safer by eliminating certain categories of bugs. It makes code clearer by unifying validation and action. It makes complex operations simpler by providing automatic rollback. Most importantly, it aligns the way we write programs with the way we think about actions and decisions in the real world.
+Failure in Verse is not something to be feared or avoided - it is a tool to be embraced. It makes programs safer by eliminating certain categories of bugs. It makes code clearer by unifying validation and action. It makes complex operations simpler by providing automatic rollback. Most importantly, it aligns the way we write programs with the way we think about actions and decisions in the real world.
 
-As you write more Verse code, you'll find that failure becomes second nature. You'll reach for failable expressions naturally when expressing conditions. You'll structure your functions to fail early when preconditions aren't met. You'll compose failures to create sophisticated control flow without nested conditionals. And you'll appreciate how this different way of thinking about control flow leads to code that is both more robust and more expressive than traditional approaches.
+As you write more Verse code, you'll find that failure becomes second nature. You'll reach for failable expressions naturally when expressing conditions. You'll structure your functions to fail early when preconditions are not met. You'll compose failures to create sophisticated control flow without nested conditionals. And you'll appreciate how this different way of thinking about control flow leads to code that is both more robust and more expressive than traditional approaches.

@@ -25,7 +25,7 @@ Infix operators appear between their two operands:
 
 **Postfix Operators**
 
-Postfix operators bind to the expression on their left. While some (like `.`) appear between two elements, they're classified as postfix because they operate on the left-hand expression:
+Postfix operators bind to the expression on their left. While some (like `.`) appear between two elements, they are classified as postfix because they operate on the left-hand expression:
 
 - `Value?` - Query operator for logic values
 - `Object.Member` - Member access (the `.` operates on the object to its left)
@@ -33,7 +33,7 @@ Postfix operators bind to the expression on their left. While some (like `.`) ap
 - `Function()` - Function call (the `()` operates on the function to its left)
 - `Constructor{}` - Object construction (the `{}` operates on the type to its left)
 
-Although `.` appears *between* `Player` and `Respawn` in `Player.Respawn()`, it's considered postfix because it binds to `Player` and selects a member from it. The right side (`Respawn`) is not a separate operand but a member selector
+Although `.` appears *between* `Player` and `Respawn` in `Player.Respawn()`, it is considered postfix because it binds to `Player` and selects a member from it. The right side (`Respawn`) is not a separate operand but a member selector
 
 ## Precedence
 
@@ -122,7 +122,7 @@ var Items:[]int = array{1, 2, 3}
 set Items += array{4, 5}  # Items is now array{1, 2, 3, 4, 5}
 set Items += (6, 7)       # Items is now array{1, 2, 3, 4, 5, 6, 7}
 
-# Note: set /= doesn't work with integers due to failable division
+# Note: set /= does not work with integers due to failable division
 # var IntValue:int = 10
 # set IntValue /= 2  # Compile error!
 ```

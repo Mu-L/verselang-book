@@ -25,7 +25,7 @@ creating well-structured, maintainable code.
 The `<public>` specifier represents the broadest level of access,
 making an identifier universally accessible from any code that can
 reference the containing module or type. When you mark something as
-public, you're making a strong commitment about its availability and
+public, you are making a strong commitment about its availability and
 stability:
 
 <!--versetest
@@ -237,7 +237,7 @@ see the containing scope.
 
 The most powerful use of scoped access is enabling controlled
 collaboration between modules. A definition can be created in one
-module but scoped to another, making it accessible where it's needed
+module but scoped to another, making it accessible where it is needed
 while keeping it hidden elsewhere:
 
 <!--versetest
@@ -263,7 +263,7 @@ Graphics := module:
 Physics := module:
     using{Graphics}
 
-    # Physics can implement the interface even though it's defined in graphics
+    # Physics can implement the interface even though it is defined in graphics
     sphere_collider := class<abstract>(CollidableShape):
         GetBounds<override>():bounding_box
 ```
@@ -271,7 +271,7 @@ Physics := module:
 
 This pattern allows graphics to define contracts that physics
 implements without exposing those implementation details publicly. The
-interface exists at the boundary between the two modules but isn't
+interface exists at the boundary between the two modules but is not
 part of either module's public API.
 
 You can scope a definition to multiple modules, creating a shared
@@ -378,7 +378,7 @@ modules need to coordinate on without exposing write access publicly.
 ### Visibility and Access Paths
 
 An important subtlety of scoped access is that it grants access to a
-specific member, but doesn't make intermediate types or modules
+specific member, but does not make intermediate types or modules
 visible. To access a scoped member, you must be able to see the entire
 path to it:
 
@@ -473,7 +473,7 @@ code must use higher-level public APIs.
 Scoped access represents an architectural commitment between
 modules. When using it effectively:
 
-- Use scoped for legitimate cross-module collaboration that doesn't
+- Use scoped for legitimate cross-module collaboration that does not
   belong in the public API
 - Keep scope definitions at the module level where they can be documented and maintained
 - Prefer scoping to explicit modules rather than deeply nested scopes
@@ -526,7 +526,7 @@ The syntax places the write-access specifier on the `var` keyword and
 the read-access specifier on the identifier itself. This visual
 separation makes the access levels immediately clear when reading
 code. The write specifier must be at least as restrictive as the read
-specifier — you cannot write to a variable that's privately readable
+specifier — you cannot write to a variable that is privately readable
 but publicly writable, as this would violate basic encapsulation
 principles.
 
@@ -539,7 +539,7 @@ works and only broadening it when necessary.
 
 For public  APIs, every public  member is a commitment.  Before making
 something public, consider  whether it truly needs to be  part of your
-module's contract or if it's  an implementation detail that happens to
+module's contract or if it is  an implementation detail that happens to
 be  needed elsewhere  temporarily.  Public members  should be  stable,
 well-documented, and designed for longevity.
 
@@ -1245,7 +1245,7 @@ ParamMessage<localizes>(Name:string) : message = "{Name}"
 
 **Non-parameter identifiers are escaped:**
 
-If you reference an identifier that isn't a parameter, it gets escaped in the output:
+If you reference an identifier that is not a parameter, it gets escaped in the output:
 
 <!--versetest
 GlobalName:string = "World"
@@ -1263,7 +1263,7 @@ RefMessage<localizes>(Greeting:string) : message =
     "{Greeting} to {GlobalName}"
 
 # Localize(RefMessage("Hello")) produces: "Hello to \{GlobalName\}"
-# Note: GlobalName is escaped because it's not a parameter
+# Note: GlobalName is escaped because it is not a parameter
 ```
 <!-- #> -->
 
@@ -1295,7 +1295,7 @@ MyModule := module:
 
 **Keep messages translatable:**
 - Use complete sentences, not fragments that might be concatenated
-- Avoid gender or number assumptions that don't translate well
+- Avoid gender or number assumptions that do not translate well
 - Provide context through parameter names
 
 **Design for different languages:**

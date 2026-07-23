@@ -42,7 +42,7 @@ Paths are the addressing system that makes Verse's vision of a shared,
 persistent Metaverse possible. Just as every website on the internet
 has a unique URL, every module has a unique path that identifies it
 globally. This path system is more than just a naming convention -
-it's a fundamental part of how Verse manages code distribution,
+it is a fundamental part of how Verse manages code distribution,
 versioning, and dependencies.
 
 Paths borrow conceptually from web domains with adaptations for the
@@ -61,7 +61,7 @@ The format `/domain/path/to/module` serves several important purposes:
 - **Ownership and authority**: The domain portion of the path (like
   `Fortnite.com` or `Verse.org`) indicates who owns and maintains the
   module. This helps developers understand the source and
-  trustworthiness of the code they're using.
+  trustworthiness of the code they are using.
 
 - **Discoverability**: Because paths follow a predictable pattern,
   developers can often guess or easily find the modules they
@@ -235,7 +235,7 @@ BadModule2 := module:
     InitFunction()  # ERROR 3585: Cannot call function in module body
 ```
 
-The restriction ensures that module initialization is deterministic and doesn't execute arbitrary code when the module is loaded.
+The restriction ensures that module initialization is deterministic and does not execute arbitrary code when the module is loaded.
 
 **Type Annotations Required:**
 
@@ -437,7 +437,7 @@ expression or embed it in other expressions:
 
 Module `using` statements must appear at the file or module level, not
 nested within other constructs. This ensures that imports are visible
-and consistent throughout the scope where they're declared.
+and consistent throughout the scope where they are declared.
 
 While module imports with paths are not allowed in function bodies,
 Verse does support **local scope `using`** with local variables and
@@ -618,7 +618,7 @@ health_component := class:
     CurrentHealth:float = 100.0
 
 # File: player_module/armor.verse
-# No import needed for health_component since it's in the same module
+# No import needed for health_component since it is in the same module
 armor_component := class:
     HealthComp:health_component = health_component{}
 ```
@@ -706,7 +706,7 @@ Variables defined at module scope are global to any game instance where the vari
 Restrictions on module-scoped definitions:
 
 - Direct `var` declarations of simple types (like `var X:int = 0`) are not allowed at module scope
-- Instances of `<unique>` classes with `<allocates>` can be created at module scope, as long as their construction doesn't actually allocate mutable memory
+- Instances of `<unique>` classes with `<allocates>` can be created at module scope, as long as their construction does not actually allocate mutable memory
 - For persistent mutable state, use `weak_map` with appropriate key types (see below)
 
 Use `weak_map(session, t)` for variables that persist for the duration of a game session:
@@ -1023,7 +1023,7 @@ player_class := class:
         set (/YourPackage/player_class:)Health = (/YourPackage/player_class:)Health - (local:)Amount
 ```
 
-Notice how `Health` and `TakeDamage` are qualified with `/YourPackage/player_class` to indicate they're members of the class.
+Notice how `Health` and `TakeDamage` are qualified with `/YourPackage/player_class` to indicate they are members of the class.
 
 **Module member qualification**: Definitions within modules are qualified with the module path:
 
@@ -1354,7 +1354,7 @@ ProcessData(Data:data_record):void =
     using{Data}
     UpdateField()  # OK - after using
 
-# ERROR: Using scope doesn't extend backward
+# ERROR: Using scope does not extend backward
 ProcessData(Data:data_record):void =
     block:
         using{Data}
@@ -1570,13 +1570,13 @@ DamageB := (/GameB/Combat:)CalculateDamage(10.0)  # Clear
 
 ### Persistence Issues
 
-**Problem**: Module-scoped variables aren't persisting as expected.
+**Problem**: Module-scoped variables are not persisting as expected.
 
 **Common Causes and Solutions**:
 
-1. **Wrong type used**: Ensure you're using `weak_map(player, t)` for player persistence.
+1. **Wrong type used**: Ensure you are using `weak_map(player, t)` for player persistence.
 2. **Type not persistable**: Check that your custom types have the `<persistable>` specifier.
-3. **Initialization timing**: Make sure you're initializing persistent data at the right time in the game lifecycle.
+3. **Initialization timing**: Make sure you are initializing persistent data at the right time in the game lifecycle.
 
 ### Local Qualifier Conflicts
 

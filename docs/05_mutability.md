@@ -6,7 +6,7 @@ The distinction between immutable and mutable data in Verse goes deeper than jus
 
 ## The Pure Foundation
 
-In Verse's pure fragment, computation happens without side effects. Values are created but never modified. Functions transform inputs into outputs without changing anything along the way. This isn't a limitation — it's a powerful foundation that makes code predictable and composable.
+In Verse's pure fragment, computation happens without side effects. Values are created but never modified. Functions transform inputs into outputs without changing anything along the way. This is not a limitation — it is a powerful foundation that makes code predictable and composable.
 
 <!--versetest
 point := struct{X:float, Y:float}
@@ -82,7 +82,7 @@ var Health:float = 100.0       # type annotation is required
 set Health = 75.0              # Allowed
 ```
 
-Every use of `var` and `set` has implications for effects. Reading from a `var` variable requires the `<reads>` effect. Using `set` requires both `<reads>` and `<writes>` effects. This isn't bureaucracy — it's transparency. The effects make mutation visible in function signatures, so callers know when functions might observe or modify state.
+Every use of `var` and `set` has implications for effects. Reading from a `var` variable requires the `<reads>` effect. Using `set` requires both `<reads>` and `<writes>` effects. This is not bureaucracy — it is transparency. The effects make mutation visible in function signatures, so callers know when functions might observe or modify state.
 
 ### Requirements for var Declarations
 
@@ -194,13 +194,13 @@ X = 2          # The inner set was overwritten!
 var Xs:[]int = array{10, 20, 30}
 var Index:int = 1
 set Xs[Index] = block:
-    set Index = 2  # Index changes, but doesn't affect which element is set
+    set Index = 2  # Index changes, but does not affect which element is set
     99
 Xs[1] = 99         # Element at original Index (1) was modified, not Xs[2]
 Index = 2          # Index is now 2, but too late to affect the assignment
 ```
 
-To avoid confusion, it's best to avoid modifying the target variable or any variables used in the target expression inside the block.
+To avoid confusion, it is best to avoid modifying the target variable or any variables used in the target expression inside the block.
 
 ### Scope and Redeclaration Restrictions
 
@@ -273,7 +273,7 @@ Verse's approach to mutability differs significantly between structs and classes
 
 ### Struct Mutability: Deep and Structural
 
-When you declare a struct variable with `var`, you're declaring the entire structure as mutable — the variable itself and all its nested fields, recursively. This deep mutability means you can modify any part of the structure tree.
+When you declare a struct variable with `var`, you are declaring the entire structure as mutable — the variable itself and all its nested fields, recursively. This deep mutability means you can modify any part of the structure tree.
 
 <!--versetest
 point:=struct<computes>{X:float, Y:float}
@@ -312,7 +312,7 @@ set Stats2.Inventory = Stats2.Inventory + array{"Sword"}  # OK
 ```
 <!-- #> -->
 
-When you assign one struct variable to another, Verse performs a deep copy. The two variables become independent, each with their own copy of the data. Changes to one don't affect the other.
+When you assign one struct variable to another, Verse performs a deep copy. The two variables become independent, each with their own copy of the data. Changes to one do not affect the other.
 
 <!--versetest
 point:=struct<computes>{}
@@ -328,7 +328,7 @@ var Original:player_stats = player_stats{Level := 5}
 var Copy:player_stats = Original
 
 set Copy.Level = 10
-Original.Level = 5   # unchanged, they're independent copies
+Original.Level = 5   # unchanged, they are independent copies
 ```
 
 This deep-copy semantics extends to all value types: structs, arrays, maps, and tuples. When you pass a struct to a function, the function receives its own copy. When you store a struct in a container, the container holds a copy. This prevents aliasing and makes reasoning about struct mutations local and predictable.
@@ -341,13 +341,13 @@ var Original:[]int = array{1, 2, 3}
 var Copy:[]int = Original
 
 set Copy[0] = 999
-Original[0] = 1  # unchanged, they're independent copies
+Original[0] = 1  # unchanged, they are independent copies
 Copy[0] = 999
 ```
 
 ### Class Mutability: Reference Semantics
 
-Classes behave differently. They have reference semantics — when you assign a class instance, you're sharing a reference to the same object, not creating a copy. The `var` annotation on a class variable only affects whether that variable can be reassigned to reference a different object. It doesn't affect the mutability of the object's fields.
+Classes behave differently. They have reference semantics — when you assign a class instance, you are sharing a reference to the same object, not creating a copy. The `var` annotation on a class variable only affects whether that variable can be reassigned to reference a different object. It does not affect the mutability of the object's fields.
 
 <!--versetest
 game_character := class:
@@ -416,7 +416,7 @@ set Box.MutableData = 42         # Allowed
 
 ### Collection Mutability: Arrays and Maps
 
-Arrays and maps follow struct semantics—they are values, not references. When you copy a collection, you get an independent copy. Mutations to one copy don't affect the other.
+Arrays and maps follow struct semantics—they are values, not references. When you copy a collection, you get an independent copy. Mutations to one copy do not affect the other.
 
 #### Basic Array Mutation
 
@@ -468,13 +468,13 @@ var Config:[string]int = map{"volume" => 50}
 set Config["brightness"] = 75
 ```
 
-Looking up a non-existent key doesn't add it:
+Looking up a non-existent key does not add it:
 
 <!--versetest-->
 <!-- 23 -->
 ```verse
 M:[int]int := map{}
-not (M[0] = 0)  # Key doesn't exist, comparison fails
+not (M[0] = 0)  # Key does not exist, comparison fails
 # M is still empty - lookup didn't add the key
 ```
 
@@ -561,7 +561,7 @@ Matrix[0] = array{666}
 Matrix[0][0] = 666
 ```
 
-All nested levels should exist to use `set`, if any of the higher levels don't exist, the entire set will fail.
+All nested levels should exist to use `set`, if any of the higher levels do not exist, the entire set will fail.
 
 <!--versetest-->
 <!-- 28 -->
@@ -572,7 +572,7 @@ set Grid["bananas"] = array{}  # OK - no nesting, just adds new key
 set Grid["apples"][2] = 7      # OK - changes nested array element "3" to "7"
 
 # This would fail: set Grid["oranges"][0] = 10
-# Error: "oranges" key doesn't exist, so Grid["oranges"] fails
+# Error: "oranges" key does not exist, so Grid["oranges"] fails
 ```
 
 #### Value Semantics for Collections
@@ -588,12 +588,12 @@ var X:[][int]int = array{map{42 => 1122, 1234 => 4321}}
 Y := X[0]
 Y = map{42 => 1122, 1234 => 4321}
 
-# Mutating X doesn't affect Y
+# Mutating X does not affect Y
 set X[0][0] = 111
 X[0] = map{42 => 1122, 1234 => 4321, 0 => 111}
 Y = map{42 => 1122, 1234 => 4321}  # Unchanged
 
-# Replacing entire element doesn't affect Y
+# Replacing entire element does not affect Y
 set X[0] = map{42 => 4242}
 X[0] = map{42 => 4242}
 Y = map{42 => 1122, 1234 => 4321}  # Still unchanged
@@ -631,7 +631,7 @@ set M[0].X = 30
 M[0].X = 30
 ```
 
-The map constructed from a `var` doesn't track changes to the source variable:
+The map constructed from a `var` does not track changes to the source variable:
 
 <!--versetest-->
 <!-- 32 -->
@@ -662,7 +662,7 @@ S.I = 88
 A[0].I = 88
 A[1].I = 88
 
-# Mutating one doesn't affect the others
+# Mutating one does not affect the others
 set A[0].I = 99
 S.I = 88     # Unchanged
 A[0].I = 99  # Changed
@@ -736,7 +736,7 @@ Available compound operators:
 - `set *= ` - Multiplication assignment (int, float)
 - `set /= ` - Division assignment (float only)
 
-**Important**: `set /=` doesn't work with integers because integer division is failable.
+**Important**: `set /=` does not work with integers because integer division is failable.
 
 Compound assignments work anywhere regular assignment does:
 
@@ -887,7 +887,7 @@ M <> map{"b" => 1, "c" => 2, "a" => 0}
 
 ## Critical Mutability Restrictions
 
-Verse imposes several important restrictions on where and how mutation can occur. These aren't arbitrary—they prevent unsound behaviors and maintain type safety.
+Verse imposes several important restrictions on where and how mutation can occur. These are not arbitrary—they prevent unsound behaviors and maintain type safety.
 
 ### Cannot Mutate Immutable Class Fields
 
@@ -980,7 +980,7 @@ Even with a mutable index, you cannot mutate an immutable array:
 ```verse
 var I:int = 2  # Mutable index
 A:[]int = array{5, 6, 7}  # Immutable array
-set A[I] = 2  # ERROR: A is not var - mutability of I doesn't matter
+set A[I] = 2  # ERROR: A is not var - mutability of I does not matter
 ```
 
 The array itself must be declared `var` to allow element mutation:
@@ -1021,8 +1021,8 @@ if (Item1 = Item2):
     Print("Same object")  # This prints
 
 if (Item1 = Item3):
-    Print("Same object")  # This doesn't print - different objects
+    Print("Same object")  # This does not print - different objects
 ```
 <!-- #> -->
 
-This identity-based equality is crucial for game objects that need distinct identities even when their data is identical. Two monsters might have the same stats, but they're still different monsters.
+This identity-based equality is crucial for game objects that need distinct identities even when their data is identical. Two monsters might have the same stats, but they are still different monsters.

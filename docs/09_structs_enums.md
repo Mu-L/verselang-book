@@ -236,7 +236,7 @@ placeholder := enum{}  # Valid but rarely useful
 ```
 <!-- #> -->
 
-Enums introduce both a type and a set of values, and it's crucial to distinguish between them:
+Enums introduce both a type and a set of values, and it is crucial to distinguish between them:
 
 <!--versetest
 status := enum:
@@ -457,7 +457,7 @@ GetDayType(D:day):string =
 
 **Closed Enums with Partial Coverage:**
 
-If you don't match all values, you must either provide a wildcard or be in a `<decides>` context:
+If you do not match all values, you must either provide a wildcard or be in a `<decides>` context:
 
 <!--NoCompile-->
 <!-- 15 -->
@@ -603,7 +603,7 @@ GetStatusCode(S:status):int =
 ```
 <!-- #> -->
 
-These errors prevent logic bugs where you think you're handling specific cases but the code will never execute.
+These errors prevent logic bugs where you think you are handling specific cases but the code will never execute.
 
 ### The `@ignore_unreachable` Attribute
 
@@ -624,7 +624,7 @@ ProcessStatus(S:status):int =
         @ignore_unreachable _ => 0  # No unreachable warning
 ```
 
-This attribute only affects cases it's applied to. Other unreachable cases without the attribute still produce errors:
+This attribute only affects cases it is applied to. Other unreachable cases without the attribute still produce errors:
 
 <!--versetest
 status := enum:

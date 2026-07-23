@@ -147,7 +147,7 @@ set Mult = 1      # X gets 10
 X = 10
 -->
 
-In this example, `Multiply` serves dual roles: it's both a function
+In this example, `Multiply` serves dual roles: it is both a function
 and a type for variable `X`.
 
 **As a type:** When you declare `var X : Multiply`, several things happen:
@@ -302,7 +302,7 @@ set X = 1  # Error! Cyclic evaluation
 ### Tracking Dependencies
 
 Live variables track dependencies dynamically at runtime, not statically from source code. 
-A variable becomes a dependency only when it's actually read during evaluation, not merely when it appears in the guard expression:
+A variable becomes a dependency only when it is actually read during evaluation, not merely when it appears in the guard expression:
 
 1. *Runtime tracking:* Dependencies are determined by which variables are actually accessed during each evaluation
 2. *Transitive tracking:* Dependencies include variables read in called functions
@@ -853,7 +853,7 @@ MFun = Multiply(Mult)
 var X:MFun = 10
 ```
 
-Now it's clear that `X` is not live—`MFun` is just a function value
+Now it is clear that `X` is not live—`MFun` is just a function value
 with type `int->int`, and that function does not have a `<reads>`
 effect.
 

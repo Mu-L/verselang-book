@@ -62,7 +62,7 @@ async expression suspends, it yields control back to the game engine,
 which continues processing other tasks and rendering frames. The
 suspended expression resumes in a future update when its conditions
 are met, seamlessly continuing from where it left off. This
-cooperative model ensures that long-running operations don't block the
+cooperative model ensures that long-running operations do not block the
 game's responsiveness.
 
 ### The `suspends` Effect
@@ -278,7 +278,7 @@ management or manual cancellation logic.
 
 Cancellation in race is immediate and thorough. The moment a winner
 emerges, all losing subexpressions receive a cancellation signal and
-begin cleanup. This isn't just an optimization; it's crucial for
+begin cleanup. This is not just an optimization; it is crucial for
 resource management and preventing unwanted side effects from
 operations that are no longer needed.
 
@@ -337,7 +337,7 @@ Result:base_class = race:
     GetB()  # Returns derived_b
 # Result is base_class, can hold either derived type
 
-# If all expressions return the same type, that's the result type
+# If all expressions return the same type, that is the result type
 SameTypeResult:int = race:
     block:
         Sleep(1.0)
@@ -401,7 +401,7 @@ case(WinnerID):
 
 The `rush` expression occupies a unique middle ground between `sync`
 and `race`. Like race, it completes as soon as the first subexpression
-finishes. Unlike race, it doesn't cancel the losers. This creates an
+finishes. Unlike race, it does not cancel the losers. This creates an
 interesting pattern where you can start multiple operations, proceed
 as soon as one provides a result, while allowing the others to
 continue their work in the background.
@@ -650,7 +650,7 @@ gives you structured fire-and-forget concurrency, but its tasks are
 canceled when the enclosing scope exits. Spawn gives you tasks that
 outlive their creating scope—use it when the work *must* complete
 regardless of what happens to the code that started it. Choose branch
-when cancellation is acceptable; choose spawn when it isn't.
+when cancellation is acceptable; choose spawn when it is not.
 
 **Working with spawned tasks:**
 
@@ -658,7 +658,7 @@ The `spawn` expression returns a `task(t)` object where `t` is the
 return type of the spawned function. This task object provides methods
 to control and query the spawned operation—you can cancel it, wait for
 it to complete, or check its current state. While spawn creates
-independent tasks that don't require management, having access to the
+independent tasks that do not require management, having access to the
 task object gives you the power to intervene when needed. See the "The
 task(t) Type" section below for complete details on task objects and
 their capabilities.
@@ -742,7 +742,7 @@ LongTask.Cancel()  # No error
 ```
 <!-- #> -->
 
-Cancellation is cooperative—the task doesn't stop
+Cancellation is cooperative—the task does not stop
 immediately. Instead, it receives a cancellation signal that is
 checked at the next suspension point. The task then unwinds
 gracefully, allowing cleanup code to run. See "Suspension Points and
@@ -973,7 +973,7 @@ yield control without actual delay but allow cancellation checking.
 Cancellation cascades through the task hierarchy. When a parent task
 is canceled, all its child tasks receive cancellation signals
 too. This cascading behavior maintains the invariant that child tasks
-don't outlive their parents in structured concurrency, preventing
+do not outlive their parents in structured concurrency, preventing
 resource leaks and ensuring predictable cleanup. In a race expression,
 for example, when the winner completes, the race task sends
 cancellation signals to all losing subtasks, which then cascade to any
@@ -1083,7 +1083,7 @@ Sleep(0.0)
 ```
 <!-- #> -->
 
-The `Sleep(0.0)` pattern deserves special attention. While it doesn't
+The `Sleep(0.0)` pattern deserves special attention. While it does not
 add actual delay, it serves two critical purposes:
 
 1. **Creates a suspension point** for cancellation checking
@@ -1279,7 +1279,7 @@ LogEvent(Message:string):void =
 **Critical transactional behavior:**
 
 Within a single transaction, `GetSecondsSinceEpoch()` returns the
-**same value** every time it's called. This ensures deterministic
+**same value** every time it is called. This ensures deterministic
 behavior and prevents time-related race conditions:
 
 <!--versetest
@@ -1479,7 +1479,7 @@ ScheduleDelayedAction(DelaySeconds:float)<suspends>:void =
 
 Note that the transactional consistency means you cannot use
 `GetSecondsSinceEpoch()` to measure time within a single
-transaction. For measuring execution time of operations that don't
+transaction. For measuring execution time of operations that do not
 span transactions, use profiling tools or external timing mechanisms.
 
 ## Events and Synchronization
@@ -1615,7 +1615,7 @@ state. Consider a game phase system: when the phase changes from
 it.
 
 The sticky behavior creates a form of eventually consistent state. If
-a task awaits a sticky event, it's guaranteed to see the most recent
+a task awaits a sticky event, it is guaranteed to see the most recent
 signal, even if that signal occurred before the await. This makes
 sticky events ideal for configuration updates, mode switches, or any
 scenario where "what's the current state?" matters more than "what
@@ -1698,12 +1698,12 @@ ProcessValue(:int):void={}
 ConsumerFunction(Source:awaitable(int))<suspends>:void =
     Value := Source.Await()
     ProcessValue(Value)
-    # Source.Signal(123)  # ERROR: awaitable doesn't have Signal
+    # Source.Signal(123)  # ERROR: awaitable does not have Signal
 
 # This function can only signal, not await
 ProducerFunction(Target:signalable(int)):void =
     Target.Signal(42)
-    # Value := Target.Await()  # ERROR: signalable doesn't have Await
+    # Value := Target.Await()  # ERROR: signalable does not have Await
 ```
 
 This separation creates clear interfaces for producer-consumer
@@ -1761,7 +1761,7 @@ MyEvent.Signal(100)  # Handler still gets called
 ```
 
 This transactional integration ensures that event subscriptions
-maintain consistency with other transactional operations. If you're
+maintain consistency with other transactional operations. If you are
 setting up a complex system where subscribing to events is part of a
 larger initialization that might fail, the transaction system
 guarantees that either all initialization succeeds or none of it does,
@@ -1931,7 +1931,7 @@ InitializeGame()<suspends>:void =
 ```
 <!-- #>-->
 
-Start background tasks that don't block gameplay:
+Start background tasks that do not block gameplay:
 
 <!--versetest
 MonitorPlayerStats()<suspends>:void={}
@@ -2018,9 +2018,9 @@ patterns when genuinely needed.
 ### Abstraction Over Implementation
 
 Verse deliberately abstracts away the underlying threading and
-scheduling mechanisms. You won't find thread creation APIs,
+scheduling mechanisms. You will not find thread creation APIs,
 thread-local storage, or explicit synchronization primitives like
-mutexes or semaphores. This isn't a limitation but a design
+mutexes or semaphores. This is not a limitation but a design
 philosophy. By working with higher-level task abstractions, Verse
 eliminates entire categories of bugs—no data races, no deadlocks from
 incorrect lock ordering, no forgotten unlock calls.

@@ -381,7 +381,7 @@ variable123       # Digits allowed after first character
 # _               # Single underscore is reserved
 ```
 
-The language doesn't syntactically distinguish between different kinds
+The language does not syntactically distinguish between different kinds
 of identifiers (types, functions, variables)—the context determines how
 each identifier is used.
 

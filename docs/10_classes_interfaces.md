@@ -400,7 +400,7 @@ character := class(entity):
 ```
 
 The `super` keyword represents the superclass type itself. When you
-write `super{...}`, you're creating an instance of the superclass with
+write `super{...}`, you are creating an instance of the superclass with
 the specified field values. This allows you to delegate to superclass
 behavior while adding subclass-specific functionality.
 
@@ -662,7 +662,7 @@ object-oriented programming.
 
 ### Constructor Functions
 
-Classes don't have traditional constructor methods like you might find
+Classes do not have traditional constructor methods like you might find
 in other object-oriented languages. Instead, Verse provides three
 approaches to object construction, each suited to different needs:
 
@@ -746,7 +746,7 @@ constructor function from normal code, use just the function name—the
 Constructor functions can have effects that control their
 behavior. Common effects include `<computes>`, `<allocates>`, and
 `<transacts>`. A particularly useful effect is `<decides>`, which
-allows constructors to fail if preconditions aren't met:
+allows constructors to fail if preconditions are not met:
 
 <!--versetest
 player := class:
@@ -918,7 +918,7 @@ constructor initializes the parent fields.
 Understanding execution order is crucial for correct initialization:
 
 1. **Archetype expression:** Field initializers execute in the order
-   they're written in the archetype
+   they are written in the archetype
 2. **Delegating constructor:** Subclass fields are initialized first,
    then the parent constructor runs
 3. **Class body blocks:** When using direct archetype construction,
@@ -1039,7 +1039,7 @@ M := module:
 # ERROR: Cannot shadow data members
 c := class { A:int }
 
-A():void = {}             # ERROR - order doesn't matter
+A():void = {}             # ERROR - order does not matter
 
 # ERROR: Module and function cannot share name
 
@@ -1048,7 +1048,7 @@ Id := module {}           # ERROR
 ```
 
 The shadowing prohibition exists **regardless of definition order** -
-it doesn't matter whether the outer name is defined before or after
+it does not matter whether the outer name is defined before or after
 the inner scope.
 
 To define methods with the same name in different contexts, use
@@ -1159,7 +1159,7 @@ extend behavior for multiple method variants independently.
 ### Interface Collisions
 
 When implementing multiple interfaces with methods of the same name,
-qualifiers disambiguate which interface's method you're implementing:
+qualifiers disambiguate which interface's method you are implementing:
 
 
 <!--versetest-->
@@ -1185,7 +1185,7 @@ Obj.(j:)B(1)  # Returns 31
 ```
 
 Without qualifiers, the compiler cannot determine which interface's
-method you're implementing.
+method you are implementing.
 
 **Complex interface hierarchies:**
 
@@ -1375,7 +1375,7 @@ Type1 := container(int)
 Type2 := container(int)
 Type3 := container(int)
 
-# All three are equal - they're the same type
+# All three are equal - they are the same type
 <#
 -->
 <!-- 49-->
@@ -1388,7 +1388,7 @@ Type1 := container(int)
 Type2 := container(int)
 Type3 := container(int)
 
-# All three are equal - they're the same type
+# All three are equal - they are the same type
 ```
 <!-- #>-->
 
@@ -1453,7 +1453,7 @@ StringContainer := container(string){Value := "text"}
 
 `container(int)` and `container(string)` are completely different
 types, with no subtype relationship. They happen to share the same
-structure (both defined from `container`), but that doesn't make them
+structure (both defined from `container`), but that does not make them
 compatible.
 
 While different instantiations of a parametric class are distinct
@@ -1715,7 +1715,7 @@ X:container(entity) = PlayerContainer  # Valid
 Y:container(player) = EntityContainer  # Also valid
 ```
 
-**Why this works:** Since the type parameter doesn't affect the
+**Why this works:** Since the type parameter does not affect the
 observable behavior, the instantiations are interchangeable.
 
 ### Recursive Parametric Types
@@ -2723,7 +2723,7 @@ Types marked with `<unique>` are subtypes of the built-in `comparable`
 type. This can create overload ambiguity:
 
 <!--versetest
-# Valid: non-unique interface doesn't conflict with comparable
+# Valid: non-unique interface does not conflict with comparable
 regular_interface := interface:
     Method():void
 
@@ -2741,7 +2741,7 @@ assert_semantic_error(3532):
 -->
 <!-- 109-->
 ```verse
-# Valid: non-unique interface doesn't conflict with comparable
+# Valid: non-unique interface does not conflict with comparable
 regular_interface := interface:
     Method():void
 
@@ -2852,7 +2852,7 @@ different instances even when their data is identical.
 
 The `<abstract>` specifier marks classes that cannot be instantiated
 directly — they exist solely as base classes for inheritance. When you
-declare a class with `<abstract>`, you're creating a template that
+declare a class with `<abstract>`, you are creating a template that
 defines structure and behavior for subclasses to inherit and
 implement.
 
@@ -2882,9 +2882,9 @@ bicycle := class(vehicle):
 ```
 
 Abstract methods within abstract classes have no implementation —
-they're pure declarations that establish what subclasses must
+they are pure declarations that establish what subclasses must
 provide. An abstract method creates a contract: any non-abstract
-subclass must override all abstract methods or the code won't compile.
+subclass must override all abstract methods or the code will not compile.
 
 ### Castable
 
@@ -3093,7 +3093,7 @@ specific type arguments. The runtime cannot distinguish between
 `container(int)` and `container(string)`, which would make
 `castable_subtype` constraints unsound.
 
-Additionally, you cannot cast to a parametric type even if it's not
+Additionally, you cannot cast to a parametric type even if it is not
 marked `<castable>`. Attempting to use a parametric type as a cast
 target produces a compile error:
 
@@ -3293,7 +3293,7 @@ ValidFoo := foo{X := 10}
 This restriction ensures that final fields maintain their guaranteed
 values throughout the object's lifetime. Final fields with default
 values act as immutable constants for each instance. If you need a
-field to be customizable during construction, don't mark it as
+field to be customizable during construction, do not mark it as
 `<final>`. Final fields must also provide a default value — you cannot
 declare a final field without initializing it.
 
@@ -3321,7 +3321,7 @@ concrete_impl := class(base_behavior):
     # Can implement Process
     Process<override>():void = {}
 
-    # Cannot override GetID or MaxCount - they're final
+    # Cannot override GetID or MaxCount - they are final
     # GetID<override>():int = 99  # ERROR
 ```
 
@@ -3430,7 +3430,7 @@ to guarantee data integrity across versions. Classes must be `<final>`
 because inheritance would complicate serialization schemas. They
 cannot contain `var` fields, preserving immutability guarantees even
 in persistent storage. They cannot be `<unique>` since identity-based
-equality doesn't survive serialization. These constraints ensure that
+equality does not survive serialization. These constraints ensure that
 what you save today can be reliably loaded tomorrow, next month, or
 next year.
 
@@ -3633,7 +3633,7 @@ hybrid := class(magical, physical):
 ```
 
 The qualified name syntax `(InterfaceName:)MemberName` specifies which
-interface's member you're accessing. Each interface maintains its own
+interface's member you are accessing. Each interface maintains its own
 instance of the field, allowing the class to support both contracts
 simultaneously without conflict.
 

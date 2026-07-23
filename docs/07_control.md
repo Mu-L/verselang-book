@@ -3,7 +3,7 @@
 Every program has a natural rhythm to its execution, a sequence in
 which instructions are processed and decisions are made. In Verse,
 this flow is more than just a mechanical progression through lines of
-code - it's a carefully orchestrated dance between different types of
+code - it is a carefully orchestrated dance between different types of
 expressions, each contributing to the overall behavior of your
 program.
 
@@ -18,8 +18,8 @@ values just like any other expression.
 The concept of scope is crucial to understanding code blocks. When you
 create a variable or constant within a block, it exists only within
 that block's context. This containment ensures that your code remains
-organized and that names don't accidentally conflict across different
-parts of your program. Consider this function, it's body is a code
+organized and that names do not accidentally conflict across different
+parts of your program. Consider this function, it is body is a code
 block that contains one if-then-else expression, itself
 composed of three different code blocks.
 
@@ -36,7 +36,7 @@ CalculateReward(PlayerLevel:int)<reads>:int =
         Result  # This block extends the scope of the if
     else:
         50      # Different branch, different scope
-                # Multiplier and Result don't exist here
+                # Multiplier and Result do not exist here
 ```
 <!-- CalculateReward(11) = 222 -->
 
@@ -1172,7 +1172,7 @@ speculative execution undoes everything—including the defer
 registration. The resource cleanup never happens because the resource
 acquisition itself is rolled back.
 
-This behavior ensures consistency: if a function fails, it's as if it
+This behavior ensures consistency: if a function fails, it is as if it
 never ran, including any cleanup code that was scheduled.
 
 **Execution Order:**

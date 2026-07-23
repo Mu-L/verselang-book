@@ -4,7 +4,7 @@ Functions are reusable code blocks that perform actions and produce
 outputs based on inputs. Think of them as abstractions for behaviors,
 much like ordering food from a menu at a restaurant. When you order,
 you tell the waiter what you want from the menu, such as
-`OrderFood("Ramen")`. You don't need to know how the kitchen prepares
+`OrderFood("Ramen")`. You do not need to know how the kitchen prepares
 your dish, but you expect to receive food after ordering. This
 abstraction is what makes functions powerful - you define the
 instructions once and reuse them in different contexts throughout your
@@ -240,8 +240,8 @@ differ from positional parameters. Two function signatures are
 considered **indistinct** (cannot overload) if they could be called
 with the same arguments.
 
-**Order doesn't matter for named parameters:** Named parameters are
-matched by name, not position, so reordering doesn't create
+**Order does not matter for named parameters:** Named parameters are
+matched by name, not position, so reordering does not create
 distinctness:
 
 <!--versetest
@@ -258,8 +258,8 @@ F(?X:int, ?Y:int):int = X - Y  # ERROR
 ```
 <!-- #>-->
 
-**Defaults don't create distinctness:** The presence or absence of
-default values doesn't make signatures distinct if the parameter names
+**Defaults do not create distinctness:** The presence or absence of
+default values does not make signatures distinct if the parameter names
 are the same:
 
 <!--versetest
@@ -328,7 +328,7 @@ distinct:
 <!--versetest-->
 <!-- 24-->
 ```verse
-# Valid: First requires ?Y, second doesn't
+# Valid: First requires ?Y, second does not
 F(?Y:int, ?X:int=42):int = X
 F(?X:int):int = X  # OK - different required parameter set
 ```
@@ -346,7 +346,7 @@ F(Arg:int, ?X:int):int = X  # OK
 ```
 
 **Superset of calls:** If one signature can handle all the calls that
-another can, they're indistinct:
+another can, they are indistinct:
 
 <!--versetest
 assert_semantic_error(3532):
@@ -423,7 +423,7 @@ H(T2)                             # Returns 15
 ```
 
 You can mix destructured tuple parameters with regular tuple
-parameters that aren't destructured:
+parameters that are not destructured:
 
 <!--versetest-->
 <!-- 31-->
@@ -481,7 +481,7 @@ ProcessData(10, Data)                              # Uses defaults: 110
 ProcessData(10, (Data, ?Scale := 2))               # 210
 ProcessData(10, (Data, ?Offset := 5))              # 115
 ProcessData(10, (Data, ?Scale := 2, ?Offset := 5)) # 215
-ProcessData(10, (Data, ?Offset := 5, ?Scale := 2)) # 215 (order doesn't matter)
+ProcessData(10, (Data, ?Offset := 5, ?Scale := 2)) # 215 (order does not matter)
 ```
 
 When a tuple parameter contains **only** named parameters (no
@@ -504,7 +504,7 @@ Configure(5, ())  # Returns 35
 
 This is a known limitation in the current implementation. When the
 tuple contains at least one positional parameter, this restriction
-doesn't apply.
+does not apply.
 
 ### Flattening and Unflattening
 
@@ -594,7 +594,7 @@ maintaining clean separation between different concerns.
 Extension methods are particularly valuable when:
 
 - You want to add domain-specific operations to built-in types
-- You need to extend types from libraries you don't control
+- You need to extend types from libraries you do not control
 - You're building fluent or builder-style APIs
 - You want to organize related functionality separately from type definitions
 
@@ -782,7 +782,7 @@ player := class:
 This prevents ambiguity and ensures that class methods always take precedence.
 
 **Scope and Visibility:** Extension methods are scoped like regular
-functions. They're only visible where they're defined or imported:
+functions. They're only visible where they are defined or imported:
 
 <!--versetest
 Utils := module:
@@ -1703,7 +1703,7 @@ assert_semantic_error(3552):
 -->
 <!-- 102-->
 ```verse
-# ERROR: Cannot return type that's invariant in t
+# ERROR: Cannot return type that is invariant in t
 c(t:type) := class{var X:t}  # Mutable field makes c invariant in t
 MakeContainer(X:t where t:type):c(t) = c(t){X := X}
 ```
@@ -1805,7 +1805,7 @@ f(x:int)<transacts><decides>:void = {}  # ERROR
 ```
 <!-- #>-->
 
-Effects alone don't create distinctness - you need different parameter types.
+Effects alone do not create distinctness - you need different parameter types.
 
 ### Overloads in Subclasses
 
@@ -1873,7 +1873,7 @@ e := class:
 myf := class(e):
      func<override>(C:c):d = d{}
 
-# ERROR: d is subtype of c, overlaps but doesn't override
+# ERROR: d is subtype of c, overlaps but does not override
 # g := class(e):
 #     func(D:d):d = D  # ERROR - ambiguous with func(C:c)
 ```
@@ -2109,7 +2109,7 @@ F(G(:string)<transacts><decides>:int):void = {}
 <!-- #>-->
 
 **5. Interfaces and Classes.** An interface and any class are never
-distinct, even if the class doesn't implement the interface, because a
+distinct, even if the class does not implement the interface, because a
 subtype of the class might:
 
 <!--versetest
@@ -2132,7 +2132,7 @@ f(:t):void = {}
 <!-- #>-->
 
 **6. Functions with Different Effects.** Functions are not distinct
-based on effects alone. Changing or removing effects doesn't create a
+based on effects alone. Changing or removing effects does not create a
 distinct overload:
 
 <!--versetest
@@ -2175,7 +2175,7 @@ F(G(:a):b):void = {}
 <!-- #>-->
 
 **8. void as Top Type.** `void` is treated as equivalent to the top
-type (accepts `any`), so it's not distinct from any other type:
+type (accepts `any`), so it is not distinct from any other type:
 
 <!--versetest
 assert_semantic_error(3532):

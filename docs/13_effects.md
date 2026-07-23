@@ -20,8 +20,8 @@ This explicitness might seem like extra work at first, but it
 fundamentally changes how you reason about code. When you see
 `<reads>` on a function, you know it observes mutable state. When you
 see `<writes>`, you know it modifies that state. When you see
-`<decides>`, you know it might fail. These aren't comments or
-documentation that might be wrong — they're compiler-enforced
+`<decides>`, you know it might fail. These are not comments or
+documentation that might be wrong — they are compiler-enforced
 contracts that must be accurate.
 
 ## Understanding Effects
@@ -56,7 +56,7 @@ GreetPlayer()<transacts>:void =
 -->
 
 The `<transacts>` effect tells you immediately that this function
-modifies mutable state. You don't need to read the implementation to
+modifies mutable state. You do not need to read the implementation to
 know that calling `GreetPlayer()` will change something in your
 program's memory. The effect is a promise about behavior, checked and
 enforced by the compiler.
@@ -72,10 +72,10 @@ visible at every level of the call stack.
 
 Making effects explicit serves both human understanding and compiler
 optimization. For developers, effects act as documentation that can't
-lie. When you're debugging why a value changed unexpectedly, you can
+lie. When you are debugging why a value changed unexpectedly, you can
 trace through the call chain looking only at functions with
-`<writes>`. When you're trying to understand why a function might
-fail, you look for `<decides>`. This isn't guesswork — it's guaranteed
+`<writes>`. When you are trying to understand why a function might
+fail, you look for `<decides>`. This is not guesswork — it is guaranteed
 by the type system.
 
 For the compiler, explicit effects enable powerful optimizations and
@@ -89,7 +89,7 @@ The effect system also enforces architectural decisions. Want to
 ensure your math library remains pure? Mark its functions
 `<computes>`. Building a predictive client system that must run on
 players' machines? Use `<predicts>` to ensure no server-only
-operations sneak in. These aren't just conventions — they're
+operations sneak in. These are not just conventions — they are
 compiler-enforced guarantees.
 
 ## Effect Families and Specifiers
@@ -194,7 +194,7 @@ Specifying `<reads>` clears the `writes` and `allocates` bits, and
 The cardinality family deals with whether functions return values
 successfully. Every function either succeeds (returning its declared
 type) or fails (producing no value). Most functions always succeed —
-they're deterministic transformations that always produce output. But
+they are deterministic transformations that always produce output. But
 functions marked with `<decides>` can fail, turning failure into a
 control flow mechanism.
 
@@ -228,7 +228,7 @@ if (ValidateHealth[Player.Health]):
 -->
 
 The beauty of the decides effect is that it unifies validation with
-control flow. You don't check conditions and then act on them — the
+control flow. You do not check conditions and then act on them — the
 check itself drives the program's path.
 
 ### Heap effects
@@ -374,7 +374,7 @@ function, they have specific rules for how they interact across
 function calls. A `<suspends>` function can call a `<decides>`
 function, but *only within a failure context* using the square bracket
 `[]` syntax -- this ensures that the failure is handled locally and
-doesn't propagate as a failure effect:
+does not propagate as a failure effect:
 
 <!--versetest
 DoAsyncWork():void={}
@@ -614,7 +614,7 @@ Validate(X:int)<computes><decides>:int =
 
 # ERROR: Cannot assign to type without <decides>
 # F:type{_(:int)<computes>:int} = Validate
-# The function CAN fail, but the type doesn't allow it
+# The function CAN fail, but the type does not allow it
 ```
 
 Similarly, functions with heap effects cannot be assigned to pure types:
@@ -631,7 +631,7 @@ Increment(C:counter)<transacts>:int =
 
 # ERROR: Cannot assign transacts function to computes type
 # F:type{_(:counter)<computes>:int} = Increment
-# The function writes state, type doesn't permit it
+# The function writes state, type does not permit it
 ```
 
 This restriction ensures type safety—the type signature is a promise
@@ -706,7 +706,7 @@ Increment(:int)<transacts>:int=1
 -->
 <!-- 25 -->
 ```verse
-# Accepts any function that doesn't exceed <transacts><decides>
+# Accepts any function that does not exceed <transacts><decides>
 ProcessValues(
     Data:[]int,
     Transform(:int)<transacts><decides>:int
@@ -866,7 +866,7 @@ contract.
 
 Limiting constructor effects helps maintain architectural
 boundaries. Data transfer objects can be kept pure with `<computes>`,
-ensuring they're just data carriers. Game entities might require
+ensuring they are just data carriers. Game entities might require
 `<allocates>` for unique identity, while service objects might need
 full `<transacts>` to initialize their state.
 
@@ -953,6 +953,6 @@ changed to `<transacts>`, but it can be refined to `<computes>`.
 Effects transform side effects from hidden gotchas into visible,
 verifiable contracts. By making the implicit explicit, Verse helps you
 write more predictable, maintainable, and correct code. The effect
-system isn't a burden — it's a tool that helps you express your intent
+system is not a burden — it is a tool that helps you express your intent
 clearly and have the compiler verify that your implementation matches
 that intent.

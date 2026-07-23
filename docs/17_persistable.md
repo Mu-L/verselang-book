@@ -81,7 +81,7 @@ Requirements for persistable classes:
 - Cannot have variable members (`var` fields) 
 - Field initializers must be effect-free (cannot use `<transacts>`, `<decides>`, etc.) 
 
-Structs are ideal for simple data structures that won't change after
+Structs are ideal for simple data structures that will not change after
 publication:
 
 <!--versetest-->
@@ -435,7 +435,7 @@ Instance2 := PersistenceModule.FromJson(Json, logged_class)  # No print
 ```
 
 Block clauses are only executed during normal construction, not during
-deserialization. This means initialization logic in blocks won't run
+deserialization. This means initialization logic in blocks will not run
 for loaded data.
 
 ### Integer Range Limitations
@@ -471,7 +471,7 @@ floating-point representation of large integers.
 they cannot be easily changed after publication. Consider versioning
 strategies for future updates.
 
-- **Use Structs for Simple Data:** For data that won't need
+- **Use Structs for Simple Data:** For data that will not need
 inheritance or complex behavior, prefer persistable structs over
 classes.
 

@@ -1,7 +1,7 @@
 # Types
 
 Every value has a type, and understanding the type system is
-fundamental to mastering any language. Types aren't merely labels -
+fundamental to mastering any language. Types are not merely labels -
 they form a rich hierarchy that governs how values flow through your
 program, what operations are permitted, and how the compiler reasons
 about your code. The type system combines static verification with
@@ -161,7 +161,7 @@ escape hatch when you genuinely need to work with values of unknown or
 varying types.
 
 Once a value is typed as `any`, you've effectively told the compiler
-"I don't know what this is," and the compiler responds by preventing
+"I do not know what this is," and the compiler responds by preventing
 most operations. This is by design—without knowing the actual type,
 the compiler cannot verify that operations are safe.
 
@@ -280,7 +280,7 @@ This makes generic functions the preferred approach when you need to write reusa
 Verse provides two distinct casting mechanisms for classes and
 interfaces: fallible casts for runtime type checking, and infallible
 casts for compile-time verified conversions. All classes and interfaces
-support dynamic casting regardless of whether they're marked with the
+support dynamic casting regardless of whether they are marked with the
 `<castable>` attribute—`<castable>` is only required for using the
 `castable_subtype` type constraint.
 
@@ -334,7 +334,7 @@ ProcessComponent(Comp:component):void =
 ```
 <!-- #> -->
 
-The cast expression fails if the runtime type doesn't
+The cast expression fails if the runtime type does not
 match, allowing you to use it directly in conditionals. The optional
 binding pattern `(Variable := Expression)` both performs the cast and
 binds the result to a variable when successful.
@@ -423,7 +423,7 @@ Value := (?int)[component{}]   # class to option - not allowed
 
 The restriction exists because fallible casts rely on runtime type
 information that only classes and interfaces maintain. Value types
-like integers and structs don't have runtime type tags.
+like integers and structs do not have runtime type tags.
 
 *Infallible* casts use parenthesis syntax `TargetType(value)` for
 conversions that the compiler can verify will always succeed. These
@@ -511,7 +511,7 @@ Test(P, render_component)   # false
 ```
 <!-- #> -->
 
-This pattern is particularly powerful when the type to check isn't
+This pattern is particularly powerful when the type to check is not
 known until runtime:
 
 <!--versetest
@@ -989,7 +989,7 @@ NegValue2:negative_percent = ---0.7  # Triple negation = -0.7
 ### Overloading Restrictions
 
 Overlapping refinement types cannot be used for function
-overloading—they're ambiguous:
+overloading—they are ambiguous:
 
 <!--versetest
 assert_semantic_error(3532):
@@ -1028,7 +1028,7 @@ assert:
 positive := type{_X:float where _X > 0.0}
 negative := type{_X:float where _X < 0.0}
 
-# Valid: ranges don't overlap (zero excluded from both)
+# Valid: ranges do not overlap (zero excluded from both)
 F(X:positive):float = X
 F(X:negative):float = X + 1.0
 
@@ -1287,7 +1287,7 @@ helps you design flexible, reusable code.
 ### Understanding void
 
 Unlike `any`, which erases type information, `void` serves as a
-"discard" type indicating that a value's specific type doesn't matter.
+"discard" type indicating that a value's specific type does not matter.
 
 Functions with `void` return type can return any value, which is then
 discarded by the type system:
@@ -1385,8 +1385,8 @@ IntFunction(X:int):int = X
 
 Between the universal supertypes (`any`, `void`) and the bottom type
 (`false`), types form natural groupings. The numeric types (`int`,
-`float`, `rational`) share common arithmetic operations but don't form
-a single hierarchy - they're siblings rather than ancestors and
+`float`, `rational`) share common arithmetic operations but do not form
+a single hierarchy - they are siblings rather than ancestors and
 descendants. The container types (arrays, maps, tuples, options) each
 have their own subtyping rules based on their element types.
 
@@ -1490,7 +1490,7 @@ transformer := type{_(:string):int}
 Type aliases are compile-time only - they create no runtime overhead
 and are purely for programmer convenience and code clarity.
 
-**Type aliases are alternative names, not new types.** They don't
+**Type aliases are alternative names, not new types.** They do not
 create distinct types like `newtype` in some languages. Values of the
 alias and the original type are completely interchangeable:
 
@@ -1778,7 +1778,7 @@ The key feature of `concrete_subtype` is that it ensures the stored type can be 
 
 #### Requirements
 
-A type can be used with `concrete_subtype` only if it's a class or
+A type can be used with `concrete_subtype` only if it is a class or
 interface type. Additionally, the actual type value assigned must be a
 concrete class—one marked with `<concrete>` and having all fields with
 defaults:
@@ -1974,7 +1974,7 @@ anchor := class<final_super>(base):
     Extra:string=""
 derived := class(anchor){ More:string="" }
 
-# Test that the calls succeed (don't fail)
+# Test that the calls succeed (do not fail)
 TestQueries()<decides>:void =
     if:
         Result1 := GetCastableFinalSuperClass[base, derived{}]  # Returns anchor
@@ -2107,9 +2107,9 @@ physics_component := class<castable><concrete>(component):
 assert:
     # Must be both castable (for type queries) and concrete (for instantiation)
     CreateAndCast(CompType:castable_concrete_subtype(component)):component =
-        # Can instantiate because it's concrete
+        # Can instantiate because it is concrete
         Instance := CompType{}
-        # Can cast because it's castable
+        # Can cast because it is castable
         if (Specific := CompType[Instance]):
             Specific
         else:
@@ -2477,7 +2477,7 @@ You cannot subclass `classifiable_subset` types or create instances
 except through the designated constructor functions. This restriction
 maintains internal invariants required for correct type tracking.
 
-Keys from one set cannot be used with a different set—they're bound to
+Keys from one set cannot be used with a different set—they are bound to
 the specific set instance where the element was added.
 
 The type parameter must be consistent across operations. You cannot

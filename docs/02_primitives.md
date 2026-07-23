@@ -44,7 +44,7 @@ Result := Abs(-42)  # Returns 42
 ```
 
 This restriction exists because intrinsics often require special
-calling conventions or optimizations that don't fit the standard
+calling conventions or optimizations that do not fit the standard
 function model. If you need to pass intrinsic functionality around,
 wrap it in a regular function or nested function.
 
@@ -1086,10 +1086,10 @@ Message2 := "Age: {Age}, Score: {Score}"
 ```
 
 This makes `ToString()` essential for formatting output, even when you
-don't call it directly.
+do not call it directly.
 
 `ToString()` only works on primitive types. User-defined classes and
-structs don't have automatic string conversion.
+structs do not have automatic string conversion.
 
 ### ToDiagnostic()
 

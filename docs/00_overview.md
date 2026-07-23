@@ -526,7 +526,7 @@ The example begins with Verse's rich type system. Types flow naturally through t
 
 **Failure as Control Flow**
 
-Throughout the code, failure drives control flow rather than exceptions or error codes. The `<decides>` effect marks functions that can fail, and failure propagates naturally through expressions. When `GetRarityMultiplier()` encounters an unknown rarity, it doesn't throw an exception or return a sentinel value - it simply fails, and the calling code handles this gracefully.
+Throughout the code, failure drives control flow rather than exceptions or error codes. The `<decides>` effect marks functions that can fail, and failure propagates naturally through expressions. When `GetRarityMultiplier()` encounters an unknown rarity, it does not throw an exception or return a sentinel value - it simply fails, and the calling code handles this gracefully.
 The `AddItem` method demonstrates how failure creates declarative validation. The expression `NewWeight <= MaxWeight` either succeeds (allowing execution to continue) or fails (preventing the item from being added). There's no explicit control flow - just a declarative assertion of what must be true.
 
 **Transactional Semantics and Speculative Execution**
@@ -553,11 +553,11 @@ The code begins with `using` statements that import functionality from other mod
 
 **Immutable by Default**
 
-Data structures are immutable unless explicitly marked with `var`. This eliminates large classes of bugs and makes concurrent programming safer. When we do need mutation, it's explicit and tracked by the effect system. See [Mutability](05_mutability.md) for complete details on `var` and `set`.
+Data structures are immutable unless explicitly marked with `var`. This eliminates large classes of bugs and makes concurrent programming safer. When we do need mutation, it is explicit and tracked by the effect system. See [Mutability](05_mutability.md) for complete details on `var` and `set`.
 
 ## Naming Conventions
 
-Verse has a set of naming conventions that make code readable and predictable. While the language doesn't enforce these conventions, following them ensures your code integrates well with the broader Verse ecosystem and is immediately familiar to other Verse developers.
+Verse has a set of naming conventions that make code readable and predictable. While the language does not enforce these conventions, following them ensures your code integrates well with the broader Verse ecosystem and is immediately familiar to other Verse developers.
 
 Identifiers should be in PascalCase (CamelCase starting with uppercase):
 
@@ -808,7 +808,7 @@ DoSomething():void = {}
 <!-- 20 -->
 ```verse
 <#>
-    This entire block is a comment because it's indented.
+    This entire block is a comment because it is indented.
     It provides a clean way to write longer documentation
     without cluttering each line with comment markers.
 

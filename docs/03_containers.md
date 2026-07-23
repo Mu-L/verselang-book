@@ -1133,7 +1133,7 @@ Maps are **covariant** in both their key and value types. A map type `[K1]V1` is
 
 This covariance is necessary because map iteration exposes the key type. When you iterate a map, you receive the actual key objects, which must be safely usable as the declared key type.
 
-While map types are covariant, map lookup operations accept keys that are `comparable` to the key type, which may appear contravariant. This is a convenience for lookups but doesn't affect the variance of the map type itself.
+While map types are covariant, map lookup operations accept keys that are `comparable` to the key type, which may appear contravariant. This is a convenience for lookups but does not affect the variance of the map type itself.
 
 <!--versetest
 animal := class<unique> {}
@@ -1501,7 +1501,7 @@ Common key types that satisfy the requirements:
 
 - **`player`** - The standard key type for player-specific data
 - **`persistent_key`** - Custom persistent keys with validity tracking
-- **`session_key`** - Transient keys that don't persist across sessions
+- **`session_key`** - Transient keys that do not persist across sessions
 
 ### Covariance
 

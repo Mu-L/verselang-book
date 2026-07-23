@@ -6,7 +6,7 @@ At its core, Verse embraces three fundamental principles that shape how code evo
 
 ## The Nature of Code Publication
 
-When developers publish code to the Verse metaverse, they enter into a social contract with all future users of that code. This contract is more than just a convention—it's enforced by the language itself. Consider what happens when you publish a simple value:
+When developers publish code to the Verse metaverse, they enter into a social contract with all future users of that code. This contract is more than just a convention—it is enforced by the language itself. Consider what happens when you publish a simple value:
 
 <!--versetest-->
 <!-- 01 -->
@@ -14,7 +14,7 @@ When developers publish code to the Verse metaverse, they enter into a social co
 Thing<public>:int = 777
 ```
 
-This seemingly straightforward declaration carries profound implications. By marking `Thing` as public, you're making a commitment that extends indefinitely into the future. Users can depend on `Thing` always existing and always being an integer. While you retain the freedom to change its actual value, the existence and type of `Thing` become permanent fixtures in the metaverse's landscape.
+This seemingly straightforward declaration carries profound implications. By marking `Thing` as public, you are making a commitment that extends indefinitely into the future. Users can depend on `Thing` always existing and always being an integer. While you retain the freedom to change its actual value, the existence and type of `Thing` become permanent fixtures in the metaverse's landscape.
 
 This permanence extends beyond simple values to encompass the entire structure of published code. Persistable structs, once published to an island, become immutable schemas that cannot be altered. Closed enums remain closed forever, unable to accept new values after publication. When a class or interface is marked with the `<castable>` attribute, that decision becomes irreversible, as changing it could introduce unsafe casting behaviors that break existing code.
 
@@ -34,7 +34,7 @@ The enforcement of these rules happens at publication time, not just at compile 
 
 Despite the strong emphasis on compatibility, Verse recognizes that some breaking changes are occasionally necessary. The language provides two mechanisms for managing such changes: a deprecation system for gradual migration and special privileges for essential breaking changes.
 
-The deprecation system operates as a multi-phase process that gives developers ample time to adapt. When code patterns become deprecated, they first generate warnings rather than errors. These warnings appear when saving code, alerting developers to practices that won't be supported in future versions. The code continues to compile and run, allowing projects to function while migration plans are developed. Only when developers explicitly upgrade to a new language version do deprecations become errors, and even then, the option to remain on older versions provides an escape hatch.
+The deprecation system operates as a multi-phase process that gives developers ample time to adapt. When code patterns become deprecated, they first generate warnings rather than errors. These warnings appear when saving code, alerting developers to practices that will not be supported in future versions. The code continues to compile and run, allowing projects to function while migration plans are developed. Only when developers explicitly upgrade to a new language version do deprecations become errors, and even then, the option to remain on older versions provides an escape hatch.
 
 Version 1 introduced several significant deprecations that illustrate this process. The prohibition of failure in set expressions, which previously allowed with warnings, now requires explicit handling of failable expressions. Mixed separator syntax, which created implicit blocks and confusing scoping rules, must now use consistent separation. The introduction of local qualifiers provides a new tool for disambiguating identifiers while deprecating the use of 'local' as a regular identifier name.
 
@@ -75,7 +75,7 @@ The rules follow a general principle: changes that make types more specific (nar
 
 **Class Uniqueness:**
 
-- **Can make non-unique class unique.** Adding the `<unique>` specifier enables identity-based equality, which doesn't break existing code.
+- **Can make non-unique class unique.** Adding the `<unique>` specifier enables identity-based equality, which does not break existing code.
 - **Cannot make unique class non-unique.** Removing `<unique>` would change the equality semantics from identity to undefined, breaking code that relies on identity comparison.
 
 **Class Abstractness:**
@@ -97,7 +97,7 @@ The rules follow a general principle: changes that make types more specific (nar
 
 **Special Attributes:**
 
-- **Cannot add or remove the `<castable>` attribute.** Runtime type checks depend on this property. Adding it after publication would enable casts that weren't previously safe, while removing it would break existing casts.
+- **Cannot add or remove the `<castable>` attribute.** Runtime type checks depend on this property. Adding it after publication would enable casts that were not previously safe, while removing it would break existing casts.
 - **Cannot remove `<final_super>` once added.** Derived types marked with `<final_super>` must continue inheriting from the same parent to maintain the type hierarchy that `GetCastableFinalSuperClass` depends on.
 - **Derived types with `<final_super>` must remain derived from the same parent.** Changing the parent type would break runtime type queries.
 
@@ -116,8 +116,8 @@ The rules follow a general principle: changes that make types more specific (nar
 
 **Adding Fields:**
 
-- **Can add fields with default values to classes.** New fields with defaults don't break existing construction code since the defaults are used automatically.
-- **Cannot add fields without default values to classes.** Existing code that constructs instances would break since it doesn't provide values for the new fields.
+- **Can add fields with default values to classes.** New fields with defaults do not break existing construction code since the defaults are used automatically.
+- **Cannot add fields without default values to classes.** Existing code that constructs instances would break since it does not provide values for the new fields.
 - **Cannot add any fields to structs.** Structs have fixed memory layout and adding fields breaks binary compatibility.
 
 **Removing Fields:**
@@ -150,7 +150,7 @@ For **non-final instance data** (fields that can be overridden in subclasses):
 
 ### Functions and Methods
 
-Function signature changes follow different rules depending on whether the function is **final/non-instance** (can't be overridden) or a **non-final instance method** (can be overridden). The rules reflect fundamental principles of type safety: functions can become more flexible about what they accept (contravariance) and more specific about what they return (covariance), but only when overriding isn't involved.
+Function signature changes follow different rules depending on whether the function is **final/non-instance** (can't be overridden) or a **non-final instance method** (can be overridden). The rules reflect fundamental principles of type safety: functions can become more flexible about what they accept (contravariance) and more specific about what they return (covariance), but only when overriding is not involved.
 
 **Overload Management:**
 
@@ -179,7 +179,7 @@ For **non-final instance methods**:
 
 **Optional Parameters:**
 
-- **Can add optional named parameters with defaults.** This doesn't break existing calls since the parameters are optional.
+- **Can add optional named parameters with defaults.** This does not break existing calls since the parameters are optional.
 - **Can change default values of optional parameters.** New callers get the new defaults while existing compiled code continues using the values it was compiled with.
 
 **Effects (Covariance):**
@@ -262,13 +262,13 @@ For **open persistable enums**:
 **Module/Type Aliases:**
 
 - **Can add module or type aliases to persistable types.** This provides additional ways to reference existing types without changing them.
-- **Can remove module or type aliases to persistable types.** Removing an alias doesn't affect the underlying type's persistence.
+- **Can remove module or type aliases to persistable types.** Removing an alias does not affect the underlying type's persistence.
 - **Module aliases must reference the same path.** Changing the target breaks all code using the alias.
 - **Type aliases must reference the same type.** Changing the aliased type breaks all code using the alias.
 
 **Non-Persistable Changes:**
 
-- **Can freely add or remove non-persistable types.** Types without `<persistable>` don't affect saved data and can be added or removed as needed.
+- **Can freely add or remove non-persistable types.** Types without `<persistable>` do not affect saved data and can be added or removed as needed.
 
 **Persistent Variables:**
 
@@ -277,7 +277,7 @@ Verse supports persistent variables (`var` declarations in module scope) that ma
 - **Can add new persistent variables.** New variables are initialized with their default values.
 - **Cannot remove persistent variables.** The metaverse expects these variables to exist persistently.
 - **Cannot change persistent variable types.** Saved values must match the expected type.
-- **Non-persistent variables can be freely changed.** Local or instance variables don't persist and can be modified.
+- **Non-persistent variables can be freely changed.** Local or instance variables do not persist and can be modified.
 
 ### Parametric Types
 
@@ -319,8 +319,8 @@ The key to working within these constraints is thoughtful initial design—choos
 
 Creating code that remains viable across extended timescales requires a different approach to software design. Developers must think beyond immediate functionality to consider how their code will evolve and interact with future systems. This forward-thinking approach influences every aspect of development, from initial design to ongoing maintenance.
 
-Schema planning becomes critical when working with persistable types. Since these cannot be changed after publication, developers must carefully consider not just current requirements but potential future needs. This might mean including optional fields that aren't immediately necessary or choosing open enums over closed ones when future expansion seems likely. The cost of getting these decisions wrong—being locked into inflexible schemas—encourages thorough upfront design.
+Schema planning becomes critical when working with persistable types. Since these cannot be changed after publication, developers must carefully consider not just current requirements but potential future needs. This might mean including optional fields that are not immediately necessary or choosing open enums over closed ones when future expansion seems likely. The cost of getting these decisions wrong—being locked into inflexible schemas—encourages thorough upfront design.
 
-Effect specification offers an interesting trade-off. While Verse allows and sometimes encourages over-specification of effects, marking a function as having effects it doesn't currently use, this provides flexibility for future implementation changes. A function marked as `<reads>` can later be optimized to `<computes>` without breaking compatibility, but the reverse isn't true. This asymmetry encourages conservative effect declarations that leave room for future modifications.
+Effect specification offers an interesting trade-off. While Verse allows and sometimes encourages over-specification of effects, marking a function as having effects it does not currently use, this provides flexibility for future implementation changes. A function marked as `<reads>` can later be optimized to `<computes>` without breaking compatibility, but the reverse is not true. This asymmetry encourages conservative effect declarations that leave room for future modifications.
 
 The choice between open and closed constructs represents another long-term decision. Open enums allow new values to be added after publication, providing extensibility at the cost of preventing exhaustive pattern matching. Closed enums offer the opposite trade-off. Understanding when flexibility or completeness is more valuable requires thinking about how the code will be used not just today, but years into the future.
