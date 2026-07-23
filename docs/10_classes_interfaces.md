@@ -1,33 +1,19 @@
 # Classes and Interfaces
 
-Classes and interfaces are Verse's object-oriented building blocks
-that enable rich type hierarchies with inheritance, polymorphism, and
-interface-based contracts. Classes provide object-oriented programming
-with fields, methods, and single inheritance, enabling you to model
-complex hierarchies of game entities with shared behavior and
-specialized implementations. Interfaces define contracts that classes
-must fulfill, promoting loose coupling and enabling multiple
-inheritance of behavior specifications.
+Classes and interfaces are Verse's object-oriented building blocks.
+Classes provide single inheritance with fields and methods, enabling
+you to model hierarchies of game entities with shared behavior.
+Interfaces define contracts for both data and behavior, supporting
+multiple inheritance of specifications.
 
-Together, classes and interfaces form a powerful system for modeling
-game entities, components, and systems with both is-a relationships
-(through class inheritance) and can-do contracts (through interface
-implementation).
-
-Let's explore classes first, then delve into interfaces and how they
-complement each other.
+Together they provide is-a relationships (class inheritance) and
+can-do contracts (interface implementation).
 
 ## Classes
 
-Classes form the backbone of object-oriented programming in Verse. A
-class serves as a blueprint for creating objects that share common
-properties and behaviors. When you define a class, you're creating a
-new type that bundles data (fields) with operations on that data
-(methods), encapsulating related functionality into a cohesive unit.
-
-Class definitions occur at module scope. You cannot define a class
-inside another class, struct, interface, or function. Classes are
-top-level type definitions that establish the type system's structure:
+A class is a type that bundles data (fields) with operations
+(methods). Class definitions must occur at module scope—you cannot
+define a class inside another class, struct, interface, or function:
 
 <!--versetest-->
 <!-- 01-->
@@ -43,9 +29,6 @@ MyModule := module:
 #         Value:int
 ```
 
-The simplest form of a class groups related data together. Consider
-modeling a character in your game:
-
 <!--versetest-->
 <!-- 02-->
 ```verse
@@ -56,14 +39,9 @@ character := class:
     MaxHealth : int = 100
 ```
 
-This class definition establishes several important concepts. Fields
-without the `var` modifier are immutable after construction—once you
-create a character with a specific name, that name cannot
-change. Fields marked with `var` are mutable and can be modified after
-the object is created (see [Mutability](05_mutability.md) for details
-on `var` and `set`). Default values provide sensible starting points,
-making object construction more convenient while ensuring objects
-start in valid states.
+Fields without `var` are immutable after construction. Fields with
+`var` are mutable (see [Mutability](05_mutability.md)). Default values
+enable convenient construction while ensuring valid initial states.
 
 ### Object Construction
 
@@ -85,16 +63,10 @@ Hero := character{Name := "Aldric", Health := 100, Level := 5}
 Villager := character{Name := "Martha"}  # default values for unspecified fields
 ```
 
-The archetype syntax uses named parameters, making the construction
-explicit and self-documenting. Any field with a default value can be
-omitted from the archetype, and the default will be used. Fields
-without defaults must be specified, ensuring objects are always fully
-initialized. Fields can be passed to an archetype in any order.
+Named parameters can appear in any order. Fields with defaults may be
+omitted. Fields without defaults must be specified.
 
 ### Methods
-
-Classes become truly powerful when you add methods that operate on the
-class's data:
 
 <!--versetest-->
 <!-- 04-->
@@ -142,10 +114,8 @@ valid_class := class:
 
 ### Blocks for Initialization
 
-Classes can include `block` clauses in their body, which execute when
-an instance is created. These blocks run initialization code that goes
-beyond simple field assignment, allowing you to perform setup logic,
-validation, or side effects during construction:
+Classes can include `block` clauses that execute when an instance is
+created:
 
 <!--versetest
 GetCurrentTime()<computes>:float=0.0
@@ -204,32 +174,16 @@ multi_step_init := class:
 # Instance.Step1 = 10, Step2 = 15, Step3 = 30
 ```
 
-**Execution order with inheritance:** When a class inherits from
-another class, the Verse VM executes blocks in
-subclass-before-superclass order, while the BP VM uses
-superclass-before-subclass order. For portable code, avoid depending
-on the execution order of blocks across inheritance hierarchies.
+**Execution order with inheritance:** Block execution order differs
+between VMs (Verse: subclass-first, BP: superclass-first). Avoid order
+dependencies for portable code.
 
 **Why blocks instead of constructors?** Block clauses have access to
-`Self` and all fields of the class, while constructor functions do
-not have access to `Self`. This makes blocks the natural place for
-initialization logic that needs to reference the object being
-constructed — such as registering `Self` with a global system or
-computing derived values from multiple fields.
+`Self`, unlike constructor functions. Use blocks for initialization
+that references the object being constructed.
 
-Additionally, field default values cannot use divergent calls — calls
-that might not complete. This means you cannot write:
-
-<!--NoCompile-->
-<!-- 06a-->
-```verse
-# ERROR V3582: Divergent calls cannot be used to define data-members
-bar := class:
-    Foo:foo = MakeFoo()
-```
-
-Instead, you give the field a simple default and move the
-initialization logic into a block:
+Additionally, field default values cannot use divergent calls. Give the
+field a simple default and move initialization into a block:
 
 <!--NoCompile-->
 <!-- 06b-->
@@ -272,24 +226,13 @@ MkWord8<constructor>(I:int)<decides><transacts> := Word8:
     B := 0 <= I and I <= MaxU8
 ```
 
-The `let` clause introduces bindings (`MaxU8` in the example above)
-that are visible to subsequent field initializers in the same
-archetype. Unlike `block` clauses, `let` clauses are restricted to
-variable declarations only — standalone expressions are not permitted
-inside `let`.
+The `let` clause introduces bindings visible to subsequent field
+initializers. Unlike `block`, `let` permits only variable
+declarations.
 
 ### Self
 
-Within class methods, `Self` is a special keyword that refers to the
-current instance of the class. Each method invocation has its own
-`Self` that refers to the specific object the method was called on.
-
-You can use `Self` in multiple ways within method bodies:
-
-- access fields of the instance
-- calling methods of the instance
-- pass the instance to other functions
-- return the instance
+Within class methods, `Self` refers to the current instance:
 
 <!--NoCompile-->
 <!-- 08-->
@@ -334,9 +277,7 @@ child_with_parent := class:
 
 ### Inheritance
 
-Classes support single inheritance, allowing you to create specialized
-versions of existing classes. This creates an "is-a" relationship
-where the subclass is a more specific type of the superclass:
+Classes support single inheritance:
 
 <!--versetest
 vector3:=struct{}
@@ -392,16 +333,13 @@ player := class(character):  # player inherits from character
 ```
 <!-- #>-->
 
-Inheritance creates a type hierarchy where a `player` is also a
-`character`, and a `character` is also an `entity`. This means you can
-use a `player` object anywhere a `character` or `entity` is expected,
-enabling polymorphic behavior.
+A `player` is a `character`, and a `character` is an `entity`. You can
+use a subclass wherever a superclass is expected.
 
 **Important constraints on inheritance:**
 
 1. **Single class inheritance only:** A class can inherit from at most
-   one other class, though it can implement multiple
-   interfaces. Multiple class inheritance is not supported:
+   one class, but can implement multiple interfaces:
 
 <!--versetest-->
 <!-- 14-->
@@ -429,34 +367,10 @@ derived := class<abstract>(base1, interface1, interface2):
 ```
 
 2. **No shadowing of data members:** Subclasses cannot declare fields
-   with the same name as fields in their superclass. This prevents
-   ambiguity and ensures clear data ownership:
+   with the same name as parent fields
 
-<!--versetest-->
-<!-- 15-->
-```verse
-base := class:
-    Value:int
-
-# Invalid: cannot shadow parent's field
-# derived := class(base):
-#     Value:int  # ERROR: shadowing base.Value
-```
-
-3. **No method signature changes:** When overriding a method, you must
-   use the exact same signature. Changing parameter types or return
-   types creates a shadowing error:
-
-<!--versetest-->
-<!-- 16-->
-```verse
-base := class:
-    Compute():int = 42
-
-# Invalid: different return type
-# derived := class(base):
-#     Compute():float = 3.14  # ERROR: signature doesn't match
-```
+3. **No method signature changes:** Overriding requires the exact same
+   signature
 
 To override a method, use the `<override>` specifier with the matching signature.
 
@@ -854,33 +768,6 @@ MakeValidPlayer<constructor>(InName:string, InLevel:int)<transacts><decides> :=
          Health := InLevel * 100
 ```
 
-Here's an example using the validated constructor with failure handling:
-
-<!--versetest
-player := class:
-    Name:string
-    var Health:int = 100
-    Level:int = 1
-MaxLevel:int = 99
-MakeValidPlayer<constructor>(InName:string, InLevel:int)<transacts><decides> := 
-    player:
-         Name := InName
-         Level := block:
-                 InLevel > 0
-                 InLevel <= MaxLevel
-                 InLevel
-         Health := InLevel * 100
-AddPlayer(:player):void={}
--->
-<!-- 271-->
-```verse
-# Constructor can fail - use with failure syntax
-if (Player := MakeValidPlayer["Hero", 5]):
-    # Construction succeeded
-    AddPlayer(Player)
-else:
-    # Construction failed - level out of range
-```
 
 Constructor functions cannot use the `<suspends>` effect. Construction
 must complete synchronously to maintain object consistency.
@@ -1019,28 +906,6 @@ MakeNewPlayer<constructor>(Name:string) := player:
     MakePlayer<constructor>(Name, 0)
 ```
 <!-- #>-->
-
-Here's an example of calling the constructor:
-
-<!--versetest
-player := class:
-    Name:string
-    var Score:int
-
-# Primary constructor
-MakePlayer<constructor>(Name:string, Score:int) := player:
-    Name := Name
-    Score := Score
-
-# Convenience constructor forwards to primary
-MakeNewPlayer<constructor>(Name:string) := player:
-    # Delegate to another constructor of the same class
-    MakePlayer<constructor>(Name, 0)
--->
-<!-- 301-->
-```verse
-NewPlayer := MakeNewPlayer("Alice")
-```
 
 When delegating to a constructor of the same class, the delegation
 replaces all field initialization—any fields you initialize before the
@@ -1278,28 +1143,13 @@ dci := class(ci):
     # Override both inherited methods, calling super implementations
     (i:)F<override>(X:int):int = 100 + (super:)F(X)
     (ci:)F<override>(X:int):int = 200 + (super:)F(X)
-
 ```
 
-And a use case:
-
-<!--versetest
-i := interface { F(X:int):int }
-
-ci := class(i):
-    (i:)F<override>(X:int):int = X + 1
-    (ci:)F(X:int):int = X + 2
-
-dci := class(ci):
-    # Override both inherited methods, calling super implementations
-    (i:)F<override>(X:int):int = 100 + (super:)F(X)
-    (ci:)F<override>(X:int):int = 200 + (super:)F(X)
--->
-<!-- 361-->
+<!--NoCompile-->
 ```verse
 DCI := dci{}
-DCI.(i:)F(10)  # Returns 111 (100 + ci's 11)
-DCI.(ci:)F(10)  # Returns 212 (200 + ci's 12)
+DCI.(i:)F(10)  # Returns 111
+DCI.(ci:)F(10)  # Returns 212
 ```
 
 `(super:)F(X)` within the qualified method calls the parent class's
@@ -1327,18 +1177,7 @@ collision := class(i, j):
     (j:)B<override>(X:int):int = 30 + X
 ```
 
-And a use case:
-
-<!--versetest
-i := interface:
-    B(X:int):int
-j := interface:
-    B(X:int):int
-collision := class(i, j):
-    (i:)B<override>(X:int):int = 20 + X
-    (j:)B<override>(X:int):int = 30 + X
--->
-<!-- 371-->
+<!--NoCompile-->
 ```verse
 Obj := collision{}
 Obj.(i:)B(1)  # Returns 21
@@ -1346,8 +1185,7 @@ Obj.(j:)B(1)  # Returns 31
 ```
 
 Without qualifiers, the compiler cannot determine which interface's
-method you're implementing, resulting in an error. The qualification
-makes your intent explicit.
+method you're implementing.
 
 **Complex interface hierarchies:**
 
@@ -1372,27 +1210,7 @@ multi := class(j, k):
     (k:)C<override>(X:int):int = 40 + X
 ```
 
-A use case:
-
-<!--versetest
-i := interface:
-    C(X:int):int
-
-j := interface(i):
-    A(X:int):int
-
-k := interface(i):
-    B(X:int):int
-    (k:)C(X:int):int  # k redefines C
-
-multi := class(j, k):
-    A<override>(X:int):int = 10 + X
-    B<override>(X:int):int = 20 + X
-    # Must implement C from both inheritance paths
-    (i:)C<override>(X:int):int = 30 + X
-    (k:)C<override>(X:int):int = 40 + X
--->
-<!-- 381-->
+<!--NoCompile-->
 ```verse
 Obj := multi{}
 Obj.(i:)C(1)  # Returns 31
@@ -1457,38 +1275,6 @@ organization without naming conflicts.
 
 ### Restrictions
 
-Qualifiers can only be used in appropriate contexts. You cannot use
-class qualifiers for local variables:
-
-<!--NoCompile-->
-<!-- 40-->
-```verse
-C := class:
-    f():void =
-        (C:)X:int = 0  # ERROR - wrong context
-```
-
-Certain qualifiers are not supported. Function qualifiers for local
-variables are not allowed:
-
-<!--NoCompile-->
-<!-- 41-->
-```verse
-C := class:
-    f():void =
-        (C.f:)X:int = 0  # ERROR - unsupported pattern
-```
-
-Similarly, using module function paths as qualifiers is not supported:
-
-<!--NoCompile-->
-<!-- 42-->
-```verse
-M := module:
-    f():void =
-        (M.f:)X:int = 0  # ERROR
-```
-
 Local variables cannot shadow class members:
 
 <!--NoCompile-->
@@ -1527,29 +1313,11 @@ container(t:type) := class:
 ```
 <!-- #>-->
 
-Here are examples of instantiating this parametric class with different types:
-
-<!--versetest
-container(t:type) := class:
-    Value:t
-
-player := class:
-    Name:string
-    var Health:int = 100
--->
-<!-- 461-->
-```verse
-# Can be instantiated with any type
-IntContainer := container(int){Value := 42}
-StringContainer := container(string){Value := "hello"}
-PlayerContainer := container(player){Value := player{Name := "Hero", Health := 100}}
-```
-
-The syntax `container(t:type)` defines a class that is parameterized by type `t`. Within the class definition, `t` can be used anywhere a concrete type would appear—in field declarations, method signatures, or return types.
+The syntax `container(t:type)` parameterizes the class by type `t`,
+which can be used in field declarations, method signatures, and return
+types.
 
 **Multiple type parameters:**
-
-Classes can accept multiple type parameters:
 
 <!--NoCompile-->
 <!-- 47-->
@@ -1557,25 +1325,11 @@ Classes can accept multiple type parameters:
 pair(t:type, u:type) := class:
     First:t
     Second:u
-```
 
-Here are examples of using the parametric pair class:
-
-<!--versetest
-pair(t:type, u:type) := class:
-    First:t
-    Second:u
--->
-<!-- 471-->
-```verse
-# Different types for each parameter
 Coordinate := pair(int, int){First := 10, Second := 20}
-NamedValue := pair(string, float){First := "score", Second := 99.5}
 ```
 
 **Type parameters in methods:**
-
-Type parameters are available throughout the class, including in methods:
 
 <!--versetest
 optional_container(t:type) := class:
@@ -1607,14 +1361,10 @@ optional_container(t:type) := class:
 ```
 <!-- #> -->
 
-Methods automatically know about the type parameter from the class
-definition—you don't redeclare it in method signatures.
-
 ### Instantiation and Identity
 
-When you instantiate a parametric class with specific type arguments,
-Verse creates a concrete type. Critically, **multiple instantiations
-with the same type arguments produce the same type**:
+Multiple instantiations with the same type arguments produce the same
+type:
 
 <!--versetest
 container(t:type) := class:
@@ -2675,11 +2425,7 @@ game_state := class:
     ValidateState<private>() : void = {}
 ```
 
-Access specifiers apply to both fields and methods, controlling who
-can read fields and call methods. The default visibility is
-`internal`, restricting access to the same module. This encapsulation
-is crucial for maintaining class invariants and hiding implementation
-details.
+Default visibility is `internal` (same module only).
 
 ### Concrete
 
@@ -2698,12 +2444,8 @@ config := class<concrete>:
 DefaultConfig := config{}
 ```
 
-This is particularly useful for configuration classes where reasonable
-defaults exist for all values.
-
-A concrete class `C` can be constructed by writing `C{}`, that is to say with the empty archetype.
-
-A concrete class may have non-concrete subclasses.
+Concrete classes can be constructed with `C{}`. Subclasses need not be
+concrete.
 
 ### Unique
 
@@ -2849,25 +2591,12 @@ game_object := class(updateable, renderable):
     Render<override>():void = {}
 ```
 
-And a use case:
-
-<!--versetest
-updateable := interface:  # Not unique
-    Update():void
-
-renderable := interface<unique>:  # Unique
-    Render():void
-
-game_object := class(updateable, renderable):
-    Update<override>():void = {}
-    Render<override>():void = {}
--->
-<!-- 1051-->
+<!--NoCompile-->
 ```verse
 # game_object is comparable because renderable is unique
 G1 := game_object{}
 G2 := game_object{}
-G1 <> G2  # true - comparable due to renderable interface
+G1 <> G2  # true
 ```
 
 Even if most interfaces are non-unique, a single `<unique>` interface
@@ -2890,20 +2619,11 @@ container := class:
     MyToken:token = token{}
 ```
 
-And a use case:
-
-<!--versetest
-token := class<unique>:
-    ID:int = 0
-
-container := class:
-    MyToken:token = token{}
--->
-<!-- 1061-->
+<!--NoCompile-->
 ```verse
 C1 := container{}
 C2 := container{}
-C1.MyToken <> C2.MyToken  # true - each container has its own unique token
+C1.MyToken <> C2.MyToken  # true - each gets its own token
 ```
 
 This behavior extends to `<unique>` instances within arrays,
@@ -3746,17 +3466,11 @@ healable := interface:
     GetMaxHealth():int
 ```
 
-Interfaces establish contracts that can be purely abstract (method
-signatures only), partially concrete (some default implementations),
-or fully implemented (complete behavior that classes inherit). Any
-class implementing an interface must provide implementations for
-abstract methods, but inherits concrete implementations and default
-field values.
+Interfaces can be purely abstract, partially concrete, or fully
+implemented. Classes must implement abstract methods but inherit
+concrete implementations.
 
 ### Implementing Interfaces
-
-Classes implement interfaces by inheriting from them and providing
-concrete implementations where required:
 
 <!--versetest
 healable:=interface:
@@ -3781,16 +3495,10 @@ character := class(damageable, healable):
         set Health = Min(MaxHealth, Health + Amount)
 ```
 
-A class can implement multiple interfaces, effectively achieving
-multiple inheritance of both behavior contracts and data
-specifications. This provides more flexibility than single class
-inheritance while maintaining type safety.
+A class can implement multiple interfaces, achieving multiple
+inheritance of contracts.
 
 ### Interface Fields
-
-Interfaces can declare data members that implementing classes must
-provide or inherit. These fields can be either immutable or mutable,
-and may include default values:
 
 <!--versetest-->
 <!-- 130-->
@@ -3819,10 +3527,8 @@ player_entity := class(entity_properties):
     # Inherits EntityID and Health with their defaults
 ```
 
-When an interface field has a default value, implementing classes
-automatically inherit that default unless they override it. Fields
-without defaults must be provided either by the implementing class or
-through construction parameters.
+Fields with defaults are inherited unless overridden. Fields without
+defaults must be provided.
 
 ### Default Implementations
 
