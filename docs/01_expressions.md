@@ -16,10 +16,10 @@ provides lightweight data aggregation.
 
 ### Basic Values
 
-Literals are source code representations of constant values. 
-Verse provides literals for all its primitive types: integers, floats, characters, 
-strings, booleans, and functions. 
-Each literal type has specific syntax rules that determine what values can be expressed and how they're interpreted.
+Literals are source code representations of constant values.
+Verse provides literals for all its primitive types: integers, floats, characters,
+strings, booleans, and functions. Each type has its own literal syntax and rules
+governing valid values and their interpretation at compile time.
 
 <!--versetest
 point := struct{X:float, Y:float}
@@ -59,11 +59,15 @@ LowercaseHex := 0xabcdef
 UppercaseHex := 0xABCDEF
 ```
 
+**Literal Limits vs Runtime Behavior:**
+
 Integer literals must fit within a 64-bit signed integer range
-(`-9223372036854775808` to `9223372036854775807`). At runtime,
-integer values are arbitrary precision and can grow past the values
-that can be written as literals. However, integers exceeding 64-bit
-have limited support (e.g., cannot be used in string interpolation
+(`-9223372036854775808` to `9223372036854775807`). This is a compile-time
+restriction on what values you can write directly in your code.
+
+At runtime, integer values use arbitrary precision arithmetic and can grow
+beyond 64-bit limits through computation. However, integers exceeding 64-bit
+range have limited support (e.g., cannot be used in string interpolation
 or persisted).
 
 #### Float Literals
@@ -79,7 +83,7 @@ Half := 0.5
 Explicit := 12.34f64    # Explicit bit-depth suffix
 ```
 
-Scientific notation is used for very large or small numbers using exponents:
+Scientific notation expresses very large or small numbers using exponents:
 
 <!--versetest-->
 <!-- 05 -->
@@ -90,12 +94,7 @@ WithSign := 2.5e+3      # 2,500 (explicit + sign)
 Compact := 1.5e2        # 150 (no sign defaults to +)
 ```
 
-Some rules:
-
-- Must have decimal point: `1.0` is valid, `1` is an integer
-- Final decimal point without digits is invalid: `1.` is a syntax error
-- All floats are 64-bit (IEEE 754 double precision); the `f64` suffix is optional
-- Unary operators work as with integers: `-1.0`, `+1.0`
+Float literals must include a decimal point (`1.0` is valid, but `1` is an integer). A final decimal point without digits is invalid (`1.` is a syntax error). All floats are 64-bit (IEEE 754 double precision); the `f64` suffix is optional. Unary operators work as with integers: `-1.0`, `+1.0`.
 
 **Overflow and Underflow Behavior:**
 
@@ -142,7 +141,7 @@ Character literals represent individual text units. Verse has two character type
 LetterA := 'a'          # Printable ASCII character
 Space := ' '
 Tab := '\t'             # Escape sequence
-Hex := 0o61             # Hex notation: 0oXX (97 decimal = 'a')
+LetterA := 0o141        # Octal notation: 0oXX (97 decimal = 'a')
 ```
 
 `char32` literals represent Unicode code points:
@@ -180,12 +179,12 @@ Escape sequences work in both `char` and strings:
 | `\#`   | Hash      | U+0023 |
 | `\~`   | Tilde     | U+007E |
 
-Hex notation work as follows:
+Numeric character notation works as follows:
 
-- `0oXX` for `char` (two hex digits, `0o00` to `0off`)
-- `0uXXXXX` for `char32` (up to six hex digits, `0u00000` to `0u10ffff`)
+- `0oXXX` for `char` (octal notation, `0o00` to `0o377` for values 0-255)
+- `0uXXXXXX` for `char32` (hexadecimal notation, `0u000000` to `0u10ffff`)
 
-Character literals can not be empty or have multiple characters.
+Character literals cannot be empty or contain multiple characters.
 
 #### String Literals
 
@@ -240,7 +239,7 @@ OtherMessage := "Another message{
 # Result := "Another message    with some empty    spaces."
 ```
 
-Empty interpolants are ignored:
+The compiler ignores empty interpolants:
 
 <!--versetest-->
 <!-- 12 -->
@@ -250,12 +249,7 @@ Text2 := "ab{
 }cd"                    # Same as "abcd" (newline ignored)
 ```
 
-Special rules:
-
-- Curly braces must be escaped: `"\{ \}"` for literal braces
-- `string` is an alias for `[]char` (array of UTF-8 code units)
-- Strings are sequences of UTF-8 bytes, not Unicode characters
-- `"José".Length = 5` (5 bytes, not 4 characters - é takes 2 bytes)
+Curly braces must be escaped (`"\{ \}"`) to appear as literal characters in strings. The `string` type is an alias for `[]char` (array of UTF-8 code units). Since UTF-8 code units are single bytes, strings are byte sequences rather than Unicode character sequences. For example, `"José".Length` returns `5` (5 code units/bytes, not 4 characters, since é takes 2 code units).
 
 String-array equivalence:
 
@@ -266,7 +260,7 @@ Test1 := logic{"abc" = array{'a', 'b', 'c'}}    # True
 Test2 := logic{"" = array{}}                    # True
 ```
 
-Comments in strings are removed:
+The compiler removes comments from strings:
 
 <!--versetest-->
 <!-- 14 -->
@@ -285,7 +279,7 @@ IsReady := true
 IsComplete := false
 ```
 
-Boolean values are used with the query operator `?` or in comparisons:
+Use boolean values with the query operator `?` or in comparisons:
 
 <!--versetest
 StartGame():void = {}
@@ -314,9 +308,9 @@ Y:int = 1
 <!-- 17 -->
 ```verse
 # Converts <decides> expression to logic value
-Success := logic{Operation[]}        # true if succeeds, false if fails
-HasValue := logic{Optional?}         # true if optional has value
-IsEqual := logic{X = Y}              # true if equal, false otherwise
+Success := logic{Operation[]}        # True if succeeds, false if fails
+HasValue := logic{Optional?}         # True if optional has value
+IsEqual := logic{X = Y}              # True if equal, false otherwise
 ```
 
 The `logic{}` expression requires at least a superficial possibility of failure. Pure expressions without `<decides>` effect cause errors:
@@ -356,11 +350,11 @@ Path syntax follows specific rules:
 - Contains label (alphanumeric, `.`, `-`)
 - Identifiers must start with letter or `_`
 
-Path literals are covered in detail in the Modules chapter.
+The Modules chapter covers path literals in detail.
 
 ### Identifiers and References
 
-Identifiers serve as references to values, whether they're constants,
+Identifiers serve as references to values, whether they are constants,
 variables, functions, or types. An identifier consists of:
 
 - **First character:** Letter (A-Z, a-z) or underscore (`_`)
@@ -440,7 +434,7 @@ x := point(0)     # Access first element
 y := point(1)     # Access second element
 ```
 
-Tuple types are written:
+Write tuple types as follows:
 
 <!--versetest
 GetPoint():tuple(int,int) = (10, 20)
@@ -454,8 +448,8 @@ tuple(int,string,logic)
 ```
 <!-- #> -->
 
-While the type of an unary element can be accepted by the compiler,
-`tuple(int)`, there is currently no syntax to write a tuple of one element.
+While the compiler accepts single-element tuple types like `tuple(int)`,
+there is currently no syntax to construct a single-element tuple value.
 
 ## Postfix Operations
 
@@ -477,7 +471,6 @@ Config.MaxPlayers       # Access nested value
 math.Sqrt(16.0)         # Access module function
 Point.X                 # Access struct field
 ```
-<!-- math.Sqrt may not compile ... I don't really care to fix it. -->
 
 Member access can be chained, creating paths through nested structures:
 
@@ -500,8 +493,8 @@ Game.Players[0].Inventory.Items[0].Name
 ### Computed Access
 
 Square brackets provide computed access to elements, whether for
-arrays, maps, or other indexable structures. The expression within
-brackets is evaluated to determine which element to access:
+arrays, maps, or other indexable structures. Verse evaluates the expression within
+brackets to determine which element to access:
 
 <!--versetest
 ComputeIndex():int = 0
@@ -528,8 +521,8 @@ Data[ComputeIndex()]    # Dynamic index computation
 <!-- #> -->
 
 The square bracket syntax `Func[]` is **required** for calling
-functions that may fail (those with the `<decides>` effect). Regular
-parentheses `Func()` are used for functions that always succeed. Array
+functions that may fail (those with the `<decides>` effect). Use regular
+parentheses `Func()` for functions that always succeed. Array
 indexing also uses `[]` because it can fail when the index is out of bounds.
 
 ```verse
@@ -698,10 +691,10 @@ for (Index -> Item : Collection) {
 }
 ```
 
-Since for expressions are themseleves expressions, they produce array
-values and compose with other expressions. The body of a for
-expression is evaluated for each successful iteration, and the
-expression as a whole has a value determined by these evaluations.
+Since for expressions are themselves expressions, they produce array
+values and compose with other expressions. Verse evaluates the body of a for
+expression for each successful iteration, and these evaluations determine
+the value of the expression as a whole.
 
 ### Loop
 
@@ -733,8 +726,7 @@ loop {
 The loop construct can use indented syntax for clarity.
 
 A loop expression produces a value of type `true`, regardless of what
-expressions appear in its body. This value is currently not useful for practical purposes—you
-typically use loops for their side effects rather than their return value.
+expressions appear in its body. This value has no practical use—loops are typically used for their side effects rather than their return value.
 
 ```verse
 Result := loop:
@@ -812,9 +804,7 @@ set Total *= Factor   # Equivalent to: set Total = Total * Factor
 ```
 <!-- #> -->
 
-Compound assignment operators evaluate the left-hand side
-expression only once** which is observable when the expression has side
-effects:
+Compound assignment operators evaluate the left-hand side expression only once, which is observable when the expression has side effects:
 
 <!--versetest
 assert:
@@ -847,9 +837,9 @@ set Array[Inc()] += 1
 # Result: Array[1] = Array[2] + 1  (different!)
 ```
 
-In the compound assignment `set Array[Inc()] += 1`, the function `Inc()`
-is called once to determine the index, then that location is read,
-incremented, and stored back.
+In the compound assignment `set Array[Inc()] += 1`, Verse calls the function `Inc()`
+once to determine the index, then reads that location,
+increments it, and stores the result back.
 
 ### Range Expressions
 
@@ -912,7 +902,7 @@ if (not IsReady[]) then Wait()
 <!-- #> -->
 
 The precedence ensures that `and` binds tighter than `or`, matching
-mathematical logic conventions, the `logic{}` expression turns succes
+mathematical logic conventions, the `logic{}` expression turns success
 or failure into a value:
 
 <!--NoCompile-->
@@ -965,7 +955,7 @@ Same := logic{A = B}
 Different := logic{A <> B}
 ```
 
-All comparison operators have the same precedence and are evaluated
+All comparison operators have the same precedence and evaluate
 **left-to-right**. Crucially, *comparison operators return their left
 operand* when the comparison succeeds, and *comparison chains have special
 syntax* that checks all adjacent pairs.
@@ -997,8 +987,8 @@ X := 0 < 10
 ```
 <!-- #> -->
 
-The comparison chain `A <= B <= C` is **not** evaluated as `(A <= B) <= C`.
-Instead, it's special syntax that checks both `A <= B` **and** `B <= C`, while
+Verse does **not** evaluate the comparison chain `A <= B <= C` as `(A <= B) <= C`.
+Instead, it is special syntax that checks both `A <= B` **and** `B <= C`, while
 returning the leftmost operand (`A`) on success. This enables natural
 mathematical notation for ranges without requiring `and` operators.
 
@@ -1100,11 +1090,11 @@ returns `Value`, not `Obj`. This allows chaining assignments:
 set Y = set X = 5  # Both X and Y become 5
 ```
 
-Though set expressions have a value, they're typically used for their side
+Though set expressions have a value, they are typically used for their side
 effects. The left-hand side must be a valid LValue—something that can be
 assigned to.
 
-Complex LValues are supported, allowing updates deep within data structures:
+Verse supports complex LValues, allowing updates deep within data structures:
 
 <!--versetest
 item := class{Name:string = "Item"}
@@ -1290,7 +1280,7 @@ for (X := 1..3; X <> 2) { X }
 for (X := 1..3, X <> 2) { X }      # Same meaning in this context
 ```
 
-In `array{}` constructors, elements can be separated by commas **or**
+In `array{}` constructors, you can separate elements with commas **or**
 semicolons (but not mixed):
 
 <!--versetest-->
@@ -1340,7 +1330,7 @@ Result := {
 }
 ```
 
-Compound expressions create new scopes for variables, allowing local bindings that don't affect the enclosing scope:
+Compound expressions create new scopes for variables, allowing local bindings that do not affect the enclosing scope:
 
 <!--versetest-->
 <!-- 64 -->
@@ -1352,7 +1342,7 @@ block:
                # X and Y no longer accessible
 ```
 
-Expressions within a compound can be separated by semicolons, commas,
+You can separate expressions within a compound using semicolons, commas,
 or newlines. Semicolons and newlines create sequences (returning the
 last value), while commas create tuples. See [Semicolons vs
 Commas](#semicolons-vs-commas) for the complete
@@ -1397,7 +1387,7 @@ Empty := array{}
 Mixed := array{1, "two", 3.0}  # Mixed types if allowed
 ```
 
-Arrays can also be constructed using indented syntax for clarity with
+You can also construct arrays using indented syntax for clarity with
 longer lists:
 
 <!--versetest-->
