@@ -14,3 +14,11 @@
 table th, table td {
   padding: 2px;
 }
+
+/* Visually separate the last two nav items (Concept Index, Talks & Tutorials) from the docs */
+.md-nav--primary > .md-nav__list > li:nth-last-child(2),
+.md-nav--primary > .md-nav__list > li:last-child {
+  margin-top: 1em;
+  padding-top: 0.5em;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}

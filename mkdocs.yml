@@ -44,6 +44,7 @@ markdown_extensions:
  - admonition
  - pymdownx.details
  - footnotes
+ - def_list
  - toc:
      permalink: true
      toc_depth: 3
@@ -95,4 +96,5 @@ nav:
   - Persistable Types: 17_persistable.md
   - Code Evolution: 18_evolution.md
   - "📚 Concept Index": concept_index.md
+  - Talks & Tutorials: talks.md
 
