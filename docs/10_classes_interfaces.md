@@ -2401,6 +2401,13 @@ UseConstrained(C:constrained(t) where t:type):int =  # ERROR
     C.Data.ID
 ```
 <!-- #> -->
+
+## Class Attributes
+
+Classes can be annotated with attributes that modify their behavior,
+visibility, and capabilities. These attributes apply to all classes,
+not just parametric ones.
+
 ### Access Specifiers
 
 Classes support fine-grained control over member visibility through

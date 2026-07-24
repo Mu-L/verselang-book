@@ -347,6 +347,34 @@ set CurrentHealth += 10.0   # Adds 10 to CurrentHealth
 set CurrentHealth *= 1.5    # Multiplies CurrentHealth by 1.5
 ```
 
+### Special Float Values
+
+Float operations follow IEEE 754 semantics, which include special
+values for infinity and Not-a-Number (NaN):
+
+<!--versetest-->
+<!-- 16a -->
+```verse
+# Infinity from division by zero
+PosInf := 1.0 / 0.0
+NegInf := -1.0 / 0.0
+
+# NaN from invalid operations
+NaNFromZeroDiv := 0.0 / 0.0
+NaNFromSqrt := Sqrt(-1.0)
+NaNFromInfDiv := PosInf / PosInf
+
+# NaN propagates through operations
+Result := NaNFromZeroDiv + 100.0  # Result is NaN
+Product := NaNFromSqrt * 2.0      # Product is NaN
+```
+
+Division by zero produces `Inf` or `-Inf` rather than failing. Invalid
+operations like `0.0 / 0.0`, `Sqrt(-1.0)`, or `Inf - Inf` produce NaN
+values. Arithmetic operations with NaN propagate the NaN to the
+result. Unlike standard IEEE 754, Verse's NaN equals itself when
+compared.
+
 To convert an `int` to a `float`, multiply it by `1.0`: `MyFloat:=MyInt*1.0`.
 
 ## Mathematical Functions
