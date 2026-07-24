@@ -1,12 +1,14 @@
-A documentation for the Verse programming language.
+# Verse Programming Language Documentation
 
-Documentation: https://verselang.github.io/book/
+**Read the documentation**: https://verselang.github.io/book/
 
-## Verse VM Locations
+This is the open source documentation for the Verse programming language. Verse is a functional logic programming language developed by Epic Games for creating interactive experiences in Unreal Engine and Fortnite.
 
-The scripts in `bin/` require the Verse VMs from the fortniteMain repository:
+This documentation provides comprehensive coverage of Verse's syntax, semantics, and core concepts, from basic expressions and primitives to advanced features like concurrency, effects, and persistence. Whether you're new to Verse or an experienced developer, you'll find detailed explanations, practical examples, and complete reference material.
 
-- **TestScript VM** (for `.versetest` files): `/mnt/c/fortniteMain/Engine/Binaries/Win64/VerseTestScriptCmdVM-Win64-Shipping.exe`
-- **CLR VM** (for `.verse` files): `/mnt/c/fortniteMain/Engine/Binaries/Win64/VerseCLRVM-Win64-Shipping.exe`
+## Development
 
-Both VMs are located in `Engine/Binaries/Win64/` (moved from `Engine/Restricted/NotForLicensees/Binaries/Win64/` during UE6 reorganization).
+See [DEVELOPMENT.md](DEVELOPMENT.md) for information about:
+- Verse VM locations and setup
+- Available scripts for testing and code extraction
+- Build instructions

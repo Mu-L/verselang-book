@@ -126,8 +126,10 @@ Small := 1.0e-320
 Smaller := Small / 1.0e10   # Underflows gracefully
 ```
 
-Operations that would produce NaN (like `0.0 / 0.0` or `Inf - Inf`)
-cause runtime errors rather than producing NaN values.
+Float operations follow IEEE 754 semantics. Operations that would
+produce NaN (like `0.0 / 0.0`, `Inf - Inf`, or `Sqrt(-1.0)`) return
+NaN values rather than failing. NaN propagates through arithmetic
+operations.
 
 #### Character Literals
 
